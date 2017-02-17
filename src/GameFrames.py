@@ -35,7 +35,7 @@ class LevelFrame(GameFrame):
     def update(self, delta, keys):
         '''
         '''
-        if keys[7]: self.game_data.switch_frame(PauseMenuFrame)
+        if keys[7]: self.game_data.switch_frame("PauseMenuFrame")
         self.game_data.update_collisions()
         for go in self.game_data.game_objects:
             go.update(delta, keys, self.game_data)
@@ -59,7 +59,7 @@ class PauseMenuFrame(GameFrame):
         '''
         '''
         if keys[7]:
-            self.game_data.switch_frame(LevelFrame)
+            self.game_data.switch_frame("LevelFrame")
 
     def render(self, screen):
         '''
@@ -81,7 +81,7 @@ class MainMenuFrame(GameFrame):
         '''
         '''
         if keys[0]:
-            self.game_data.switch_frame(LevelFrame)
+            self.game_data.switch_frame("LevelFrame")
 
     def render(self, screen):
         '''

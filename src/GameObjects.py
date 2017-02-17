@@ -1,6 +1,5 @@
 import pygame as pg
 import numpy as np
-from GameEngine import GameEngine
 from GameAssets import *
 
 class GameObject():
@@ -27,7 +26,7 @@ class GameObject():
         '''
         '''
         draw_rect = self.rect.astype(int) + game_data.camera_pos.astype(int)
-        if GameEngine.debug:
+        if game_data.debug:
             pg.draw.rect(screen, self.debug_color, draw_rect.tolist(), 1)
             t = GameFonts.font_0.render(self.__class__.__name__, False, (255, 255, 255))
             screen.blit(t, (draw_rect[0] + (-t.get_width()/2 + draw_rect[2]/2), draw_rect[1] + (-t.get_height()/2  + draw_rect[3]/2)))
