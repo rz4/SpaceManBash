@@ -1,1 +1,1 @@
-{"controls": {"DOWN": 115, "ATTACK": 32, "UP": 119, "CROUCH": 308, "LEFT": 97, "SPRINT": 304, "PAUSE": 27, "RIGHT": 100}, "screen_dim": [800, 600], "save_filenames": []}
+{"screen_dim": [800, 600], "save_filenames": [], "controls": {"UP": 119, "ENTER": 13, "SPRINT": 304, "ATTACK": 303, "PAUSE": 27, "CROUCH": 308, "DOWN": 115, "LEFT": 97, "RIGHT": 100, "JUMP": 32}}

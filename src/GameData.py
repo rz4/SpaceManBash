@@ -20,7 +20,8 @@ class GameData():
 
         '''
         self.debug = True
-        self.game_name = "Script Kitties Game v0.0"
+        self.game_name = "SpaceManBash"
+        self.delta_sum = 0
 
         # GameFrome Data
         self.frames = []
@@ -34,9 +35,11 @@ class GameData():
             'UP' : pg.K_w,
             'DOWN' : pg.K_s,
             'CROUCH' : pg.K_LALT,
-            'ATTACK' : pg.K_SPACE,
+            'ATTACK' : pg.K_RSHIFT,
+            'JUMP' : pg.K_SPACE,
             'SPRINT' : pg.K_LSHIFT,
-            'PAUSE' : pg.K_ESCAPE
+            'PAUSE' : pg.K_ESCAPE,
+            'ENTER' : pg.K_RETURN
         }
 
         # Save Data
@@ -45,9 +48,9 @@ class GameData():
 
         # Level Data
         self.levels = []
-        self.level_index = None
+        self.level_index = 0
         self.camera_pos = np.array([0.0, 0.0, 0.0, 0.0])
-        self.camera_limits = [-1000.0, 0.0, 1000.0, 1000.0]
+        self.camera_limits = [0.0, 0.0, 0.0, 0.0]
         self.game_objects = []
         self.collisions = {}
 
@@ -118,7 +121,7 @@ class GameData():
 
         '''
         try:
-            with open("../data/saves/" + self.saves[self.save_index], "w") as f:
+            with open("../data/" + self.saves[self.save_index], "w") as f:
                 for level_data in self.levels:
                     json_dump = json.dumps(level_data)
                     f.write(json_dump + '\n')
@@ -134,7 +137,7 @@ class GameData():
             filename    ;str    save filename
         '''
         try:
-            with open("../data/saves/" + self.saves[self.save_index], "r") as f:
+            with open("../data/" + self.saves[self.save_index], "r") as f:
                 i = 0
                 for data in f:
                     if i > 0: self.levels.append(level_data)
@@ -147,7 +150,7 @@ class GameData():
         Method loads all game level data from file.
 
         '''
-        for filename in os.listdir("../data/levels/"):
+        for filename in sorted(os.listdir("../data/levels/")):
             if filename.endswith(".lev"):
                 try:
                     with open("../data/levels/" + filename, "r") as f:
@@ -155,7 +158,6 @@ class GameData():
                 except Exception as e:
                     print("Could Load Game Data:", filename)
                     print(e)
-        self.level_index = 0
 
     def load_level(self):
         '''
@@ -165,6 +167,7 @@ class GameData():
         try:
             data = json.loads(self.levels[self.level_index])
             self.camera_pos = np.array(data['camera_pos'])
+            self.camera_limits = np.array(data['camera_limits'])
             for go in data['game_objects']:
                 module = __import__("GameObjects")
                 class_ = getattr(module, go[0])

@@ -18,6 +18,7 @@ class SpaceManBash():
 
         '''
         self.game_engine = GameEngine("../data/spacemanbash_config.dat")
+        self.game_engine.game_data.switch_frame("MainMenuFrame")
         self.game_engine.run()
 
 

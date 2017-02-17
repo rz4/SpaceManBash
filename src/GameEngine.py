@@ -33,8 +33,9 @@ class GameEngine():
         pg.display.set_caption(self.game_data.game_name)
         self.screen = pg.display.set_mode(self.game_data.screen_dim)
 
-        # Initiate Game
-        self.game_data.switch_frame("MainMenuFrame")
+        #Initiate Game Assets
+        GameAnimations.init()
+        GameFonts.init()
 
     def run(self):
         '''
@@ -46,6 +47,7 @@ class GameEngine():
 
         #Game Loop
         while running:
+            # Key Events
             key_events = [0 for i in range(len(self.game_data.controls))]
 
             # Key Pressed Events
@@ -53,22 +55,28 @@ class GameEngine():
                 if event.type == pg.QUIT:
                     running = False
                 if event.type == pg.KEYDOWN:
-                    if event.key == self.game_data.controls['ATTACK']:
+                    if event.key == self.game_data.controls['JUMP']:
                         key_events[0] = 1
+                    if event.key == self.game_data.controls['ATTACK']:
+                        key_events[1] = 1
                     if event.key == self.game_data.controls['PAUSE']:
-                        key_events[7] = 1
+                        key_events[2] = 1
+                    if event.key == self.game_data.controls['ENTER']:
+                        key_events[3] = 1
 
             # Key Held Events
             pressed = pg.key.get_pressed()
-            if pressed[self.game_data.controls['LEFT']]: key_events[1] = 1
-            if pressed[self.game_data.controls['RIGHT']]: key_events[2] = 1
-            if pressed[self.game_data.controls['UP']]: key_events[3] = 1
-            if pressed[self.game_data.controls['DOWN']]: key_events[4] = 1
-            if pressed[self.game_data.controls['CROUCH']]: key_events[5] = 1
-            if pressed[self.game_data.controls['SPRINT']]: key_events[6] = 1
+            if pressed[self.game_data.controls['LEFT']]: key_events[4] = 1
+            if pressed[self.game_data.controls['RIGHT']]: key_events[5] = 1
+            if pressed[self.game_data.controls['UP']]: key_events[6] = 1
+            if pressed[self.game_data.controls['DOWN']]: key_events[7] = 1
+            if pressed[self.game_data.controls['CROUCH']]: key_events[8] = 1
+            if pressed[self.game_data.controls['SPRINT']]: key_events[9] = 1
 
             #Update and Render Game State
             delta = 1 / float(self.clock.tick(self.fps))
+            self.game_data.delta_sum += 1
+            if self.game_data.delta_sum > 10000: self.game_data.delta_sum = 0
             self.update(delta, key_events)
             self.render()
 
