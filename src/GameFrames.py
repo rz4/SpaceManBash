@@ -87,6 +87,7 @@ class PauseMenuFrame(GameFrame):
         '''
         '''
         super().__init__(game_data)
+        print(pg.display)
 
     def update(self, delta, keys):
         '''
@@ -111,6 +112,7 @@ class MainMenuFrame(GameFrame):
         '''
 
         super(MainMenuFrame,self).__init__(game_data)
+        print(pg.display)
 
 
     def update(self, delta, keys):
@@ -127,14 +129,16 @@ class MainMenuFrame(GameFrame):
         anim_width = ga.flame[0].get_width()
         anim_height = ga.flame[0].get_height()
 
-        screen.blit(ga.space_img,(0,0))
-
+        #music.playmusic('The_Batman_-_The_Umbrella_Attack_Theme_song.mp3')
+        
+        space_img = pg.transform.scale(ga.space_img, (dim[0], dim[1]))
+        screen.blit(space_img,(0,0))
 
         for i in range(anim_width,dim[0],(anim_width)*2):
-            screen.blit(ga.animate(ga.flame, 10, self.game_data.delta_sum), (i, dim[1]-anim_height))
+            screen.blit(ga.animate(ga.flame, 5, self.game_data.delta_sum), (i, dim[1]-anim_height))
             screen.blit(ga.animate(ga.flame, 5, self.game_data.delta_sum), (i, 0))
 
-        screen.blit(ga.animate(ga.mario_rest, 5, self.game_data.delta_sum), (-120+dim[0]*4/5, dim[1]/2-100))
+        screen.blit(ga.animate(ga.dragon_flame_left, 17, self.game_data.delta_sum), (-120+dim[0]*6/7, dim[1]/2-100))
 
         text_0 = gf.font_1.render("Main Menu", False, (255, 255, 255))
         text_1 = gf.font_1.render("Press Space", False, (255, 255, 255))

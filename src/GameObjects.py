@@ -85,7 +85,7 @@ class Player(GameObject):
         '''
         limit = 150
         self.set_dim(68.0, 116.0)
-        if keys[9] and self.on_ground(game_data) and self.acc[0] < 60: self.acc[0] *= 1.015
+        if keys[9] and self.on_ground(game_data) and self.acc[0] < 20: self.acc[0] *= 1.015
         if (not keys[9] or not self.on_ground(game_data) ) and self.acc[0] > 12.0: self.acc[0] -= 60
         if self.acc[0] < 12.0: self.acc[0] = 12.0
         if keys[0] and self.on_ground(game_data): self.vel[1] = -150
@@ -152,6 +152,81 @@ class Player(GameObject):
                     flag = True
                     return flag
         return flag
+		
+class Enemy_Dragon(GameObject):
+    """
+    """
+
+    def __init__(self, args):
+        '''
+        '''
+        super().__init__([args[0], args[1], 68.0, 116.0])
+        self.solid = True
+        self.physics = True
+        self.debug_color = (0, 255, 0)
+        self.animations =[
+            ga.dragon_fly_left,
+            ga.dragon_fly_right,
+            ga.dragon_still_left,
+            ga.dragon_still_right,
+            ga.dragon_fire_left,
+            ga.dragon_fire_right,
+            ga.dragon_die_left,
+            ga.dragon_die_right
+            ]
+        self.anim_index = 2
+        self.anim_speed = 1
+
+    def update(self, delta, keys, game_data):
+        '''
+        '''
+        limit = 150
+        self.set_dim(68.0, 116.0)
+        if self.on_ground(game_data) and self.acc[0] < 20: self.acc[0] *= 1.015
+        if self.acc[0] < 12.0: self.acc[0] = 12.0
+        if self.on_ground(game_data): self.vel[1] = -150
+        if self.vel[0] < limit:
+            if self.on_ground(game_data): self.vel[0] += self.acc[0]
+            else: self.vel[0] += 1
+
+        super().update(delta, keys, game_data)
+
+        self.anim_speed = 13
+
+        if self.on_ground(game_data):
+            if self.anim_index in [6, 7]: self.anim_index =  2
+            if self.anim_index in [4, 5]: self.anim_index =  3
+
+        if self.vel[0] > 10.0:
+            self.anim_index = 1
+        if self.vel[0] < -10.0 :
+            self.anim_index = 0
+
+
+    def render(self, screen, game_data):
+        '''
+        '''
+        draw_rect = self.rect.astype(int) + game_data.camera_pos.astype(int)
+        anim = ga.animate(self.animations[self.anim_index], self.anim_speed, game_data.delta_sum)
+        w = anim.get_width()
+        h = anim.get_height()
+        x_prime = draw_rect[0] + (draw_rect[2]/2.0) - (w/2.0)
+        y_prime = draw_rect[1] + (draw_rect[3]/2.0) - (h/2.0)
+        screen.blit(anim, (x_prime, y_prime))
+        #super().render(screen, game_data)
+
+    def on_ground(self, game_data):
+        '''
+        '''
+        flag = False
+        ground_objects = ['Wall', 'Platform']
+        for i in ground_objects:
+            for j in game_data.collisions[self]:
+                if j.__class__.__name__ == i:
+                    flag = True
+                    return flag
+        return flag
+
 
 class Wall(GameObject):
     """
