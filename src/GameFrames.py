@@ -7,6 +7,7 @@ Last Updated: 12/17/17
 import pygame as pg
 from GameAssets import GameAnimations as ga
 from GameAssets import GameFonts as gf
+import GameObjects
 
 class GameFrame(object):
     """
@@ -60,6 +61,18 @@ class LevelFrame(GameFrame):
         if self.game_data.save_index: self.game_data.load_save()
         else: self.game_data.load()
         self.game_data.load_level()
+        
+        dim = self.game_data.screen_dim
+        self.camera_limits = self.game_data.camera_limits
+        
+        # Change to none so we can switch backgrounds with levels
+        self.background1 = pg.image.load("../data/sprites/space2.png").convert()
+        self.background1 = pg.transform.scale(self.background1, (dim[0]+900,  dim[1]+100))
+        self.background2 = pg.image.load("../data/sprites/stationbckground.png").convert()
+        self.background2 = pg.transform.scale(self.background2, (dim[0]+2000,  dim[1]+500))
+        self.background2.set_colorkey((0, 0, 0))
+
+        self.world_shift = 0
 
     def update(self, delta, keys):
         '''
@@ -75,6 +88,12 @@ class LevelFrame(GameFrame):
     def render(self, screen):
         '''
         '''
+        dim = self.game_data.screen_dim
+        cam_pos = self.game_data.camera_pos.astype(int)
+		
+        screen.blit(self.background1,(cam_pos[0]/5,cam_pos[1]/5-100))
+        screen.blit(self.background2,(cam_pos[0]/3,cam_pos[1]/3-200))
+		
         # Render game objects
         for go in self.game_data.game_objects:
             go.render(screen, self.game_data)
@@ -82,26 +101,56 @@ class LevelFrame(GameFrame):
 class PauseMenuFrame(GameFrame):
     """
     """
-
     def __init__(self, game_data):
         '''
         '''
         super().__init__(game_data)
-        print(pg.display)
+        self.acc = 0
+        self.anim_cycle = 0
 
     def update(self, delta, keys):
         '''
-        '''
-        # Change frame to level frame if key 7 is pressed
-        if keys[2]:
+        '''		
+        if keys[0]:
             self.game_data.switch_frame("LevelFrame")
+        if keys[10]:
+            self.game_data.load_level
+            self.game_data.switch_frame("MainMenuFrame")
+			
+        if self.acc < 1:
+            self.acc += delta
+        else:
+            self.acc = 0
+            if self.anim_cycle < 4:
+                self.anim_cycle += 1
+            else: self.anim_cycle = 0
 
     def render(self, screen):
         '''
         '''
         dim = self.game_data.screen_dim
-        text_0 = gf.font_1.render("Pause Menu Press ESC", False, (255, 255, 255))
-        screen.blit(text_0, (-text_0.get_width()/2 + dim[0]/2, -text_0.get_height()/2  + dim[1]/2))
+        anim_width = ga.flame[0].get_width()
+        anim_height = ga.flame[0].get_height()
+        
+        space_img = pg.transform.scale(ga.space_img, (dim[0], dim[1]))
+        screen.blit(space_img,(0,0))
+
+        for i in range(anim_width,dim[0],(anim_width)*2):
+            screen.blit(ga.animate(ga.flame, 5, self.game_data.delta_sum), (i, dim[1]-anim_height))
+            screen.blit(ga.animate(ga.flame, 5, self.game_data.delta_sum), (i, 0))
+		
+        text_0 = gf.font_1.render("Pause Menu", False, (255, 255, 255))
+        screen.blit(text_0, (-text_0.get_width()/2 + dim[0]/2, -text_0.get_height()/2  + dim[1]/4))
+		
+        text_0 = gf.font_1.render("To return to game", False, (0, 255, 255))
+        text_1 = gf.font_1.render("Press SPACE", False, (0, 255, 255))
+        screen.blit(text_0, (-text_0.get_width()/2 + dim[0]/4, -text_0.get_height()/2  + dim[1]*4/9))
+        screen.blit(text_1, (-text_1.get_width()/2 + dim[0]/4, -text_1.get_height()/2  + dim[1]*5/9))
+        
+        text_0 = gf.font_1.render("For main menu", False, (0, 255, 255))
+        text_1 = gf.font_1.render("Press H", False, (0, 255, 255))
+        screen.blit(text_0, (-text_0.get_width()/2 + dim[0]*3/4, -text_0.get_height()/2  + dim[1]*4/9))
+        screen.blit(text_1, (-text_1.get_width()/2 + dim[0]*3/4, -text_1.get_height()/2  + dim[1]*5/9))
 
 class MainMenuFrame(GameFrame):
     """

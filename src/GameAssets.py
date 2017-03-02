@@ -114,7 +114,7 @@ class GameAnimations:
         GameAnimations.unicorn_die_left = SpriteSheet("../data/sprites/unicorn(1).png").get_animation(0, 460, 175, 145, 7, 160, 120,flip= True)
         GameAnimations.unicorn_die_right = SpriteSheet("../data/sprites/unicorn(1).png").get_animation(0, 460, 175, 145, 7, 160, 120)
         GameAnimations.space_img = SpriteSheet('../data/sprites/space.png').get_image(0,0,512,488)
-
+		
         GameAnimations.sheep_walk_left = SpriteSheet("../data/sprites/sheep.png").get_animation(119, 41, 40, 38, 3, 120, 120)
         GameAnimations.sheep_walk_right = SpriteSheet("../data/sprites/sheep.png").get_animation(119, 41, 40, 38, 3, 120, 120, flip= True)
         GameAnimations.sheep_attack_left = SpriteSheet("../data/sprites/sheep.png").get_animation(239, 361, 40, 38, 10, 120, 120)
