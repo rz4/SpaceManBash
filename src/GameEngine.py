@@ -72,6 +72,7 @@ class GameEngine():
             if pressed[self.game_data.controls['DOWN']]: key_events[7] = 1
             if pressed[self.game_data.controls['CROUCH']]: key_events[8] = 1
             if pressed[self.game_data.controls['SPRINT']]: key_events[9] = 1
+            if pressed[self.game_data.controls['HOME']]: key_events[10] = 1
 
             #Update and Render Game State
             delta = 1 / float(self.clock.tick(self.fps))

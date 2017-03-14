@@ -38,6 +38,11 @@ class GameObject():
         self.rect[0] = x
         self.rect[1] = y
 
+    def get_pos(self):
+        '''
+        '''
+        return [self.rect[0], self.rect[1]]
+
     def set_dim(self, w, l):
         '''
         '''
@@ -128,6 +133,7 @@ class Player(GameObject):
             if self.vel[1] > -1.0:
                 self.anim_index = 5
                 self.set_dim(75.0, 83.0)
+        Player.position = self.get_pos()
 
     def render(self, screen, game_data):
         '''
@@ -182,12 +188,16 @@ class Enemy_Dragon(GameObject):
         '''
         limit = 150
         self.set_dim(68.0, 116.0)
-        if self.on_ground(game_data) and self.acc[0] < 20: self.acc[0] *= 1.015
-        if self.acc[0] < 12.0: self.acc[0] = 12.0
-        if self.on_ground(game_data): self.vel[1] = -150
-        if self.vel[0] < limit:
-            if self.on_ground(game_data): self.vel[0] += self.acc[0]
-            else: self.vel[0] += 1
+        if self.on_ground(game_data): 
+            if Player.position[0] < self.get_pos()[0]:
+                self.vel[0] = -50
+            else:
+                self.vel[0] = 50
+        if self.on_ground(game_data): 
+            if Player.position[1] < self.get_pos()[1]:
+                self.vel[1] = -50
+            else:
+                self.vel[1] = 50
 
         super().update(delta, keys, game_data)
 

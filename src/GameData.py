@@ -39,7 +39,8 @@ class GameData():
             'JUMP' : pg.K_SPACE,
             'SPRINT' : pg.K_LSHIFT,
             'PAUSE' : pg.K_ESCAPE,
-            'ENTER' : pg.K_RETURN
+            'ENTER' : pg.K_RETURN,
+            'HOME' : pg.K_h
         }
 
         # Save Data
@@ -151,7 +152,7 @@ class GameData():
 
         '''
         for filename in sorted(os.listdir("../data/levels/")):
-            if filename.endswith("level_1.lev"):
+            if filename.endswith(".lev"):
                 try:
                     with open("../data/levels/" + filename, "r") as f:
                         self.levels.append(f.read())
