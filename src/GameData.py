@@ -151,7 +151,7 @@ class GameData():
 
         '''
         for filename in sorted(os.listdir("../data/levels/")):
-            if filename.endswith(".lev"):
+            if filename.endswith("level_1.lev"):
                 try:
                     with open("../data/levels/" + filename, "r") as f:
                         self.levels.append(f.read())

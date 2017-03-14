@@ -131,6 +131,8 @@ class GameAnimations:
         GameAnimations.dragon_flame_right = SpriteSheet("../data/sprites/dragon.png").get_animation(323, 222, 68, 42, 4, 120, 120)
         GameAnimations.dragon_die_left = SpriteSheet("../data/sprites/dragon.png").get_animation(167, 87, 80, 70, 2, 120, 120, flip=True)
         GameAnimations.dragon_die_right = SpriteSheet("../data/sprites/dragon.png").get_animation(167, 87, 80, 70, 2, 120, 120)
+		
+        GameAnimations.lava = SpriteSheet("../data/sprites/Lava_floor.png").get_animation(0, 0, 128, 138, 11, 120, 120)
 
     @staticmethod
     def animate(animation, speed, delta_sum):
