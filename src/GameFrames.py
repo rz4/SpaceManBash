@@ -187,7 +187,6 @@ class MainMenuFrame(GameFrame):
             screen.blit(ga.animate(ga.flame, 5, self.game_data.delta_sum), (i, dim[1]-anim_height))
             screen.blit(ga.animate(ga.flame, 5, self.game_data.delta_sum), (i, 0))
 
-        screen.blit(ga.animate(ga.dragon_flame_left, 17, self.game_data.delta_sum), (-120+dim[0]*6/7, dim[1]/2-100))
 
         text_0 = gf.font_1.render("Main Menu", False, (255, 255, 255))
         text_1 = gf.font_1.render("Press Space", False, (255, 255, 255))

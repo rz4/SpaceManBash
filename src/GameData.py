@@ -39,7 +39,8 @@ class GameData():
             'JUMP' : pg.K_SPACE,
             'SPRINT' : pg.K_LSHIFT,
             'PAUSE' : pg.K_ESCAPE,
-            'ENTER' : pg.K_RETURN
+            'ENTER' : pg.K_RETURN,
+            'HOME' : pg.K_h
         }
 
         # Save Data
