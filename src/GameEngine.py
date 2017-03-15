@@ -7,6 +7,7 @@ Last Updated: 12/17/17
 import pygame as pg
 from GameAssets import *
 from GameData import GameData
+import Transitions
 
 class GameEngine():
     """
@@ -32,10 +33,15 @@ class GameEngine():
         pg.init()
         pg.display.set_caption(self.game_data.game_name)
         self.screen = pg.display.set_mode(self.game_data.screen_dim)
+        Transitions.init(self.screen, self.game_data.screen_dim[0], self.game_data.screen_dim[1], [0,0,0])
+
+        pg.mixer.init()
+        pg.mixer.music.load("../data/music/test.mp3")
+
 
         #Initiate Game Assets
-        GameAnimations.init()
-        GameFonts.init()
+        GameAssets.init()
+        GameAssets.init()
 
     def run(self):
         '''
@@ -44,6 +50,54 @@ class GameEngine():
         '''
         running = True
         self.clock = pg.time.Clock()
+
+        # Intro Animation
+        logo = pg.image.load("../doc/logo.png").convert()
+        logo.set_colorkey((0, 0, 0))
+        self.screen.fill((252,240,228))
+        self.screen.blit(logo, (250, 150))
+
+        Transitions.run("fadeIn", 1.5)
+        while(True):
+            if Transitions.updateScreen() == False: break
+            self.clock.tick(self.fps)
+            pg.display.flip()
+
+        pg.time.wait(2000)
+
+        Transitions.run("fadeOut", 1.5)
+        while(True):
+            if Transitions.updateScreen() == False: break
+            self.clock.tick(self.fps)
+            pg.display.flip()
+
+        pg.time.wait(1000)
+
+        self.screen.fill((0,0,0))
+        text = GameAssets.font_1.render("Script Kitties Entertainment Presents:", False, (255, 255, 255))
+        self.screen.blit(text, (200, 250))
+        pg.mixer.music.play()
+
+        Transitions.run("fadeIn", 1.5)
+        while(True):
+            if Transitions.updateScreen() == False: break
+            self.clock.tick(self.fps)
+            pg.display.flip()
+
+        pg.time.wait(1500)
+
+        Transitions.run("fadeOut",  1.5)
+        while(True):
+            if Transitions.updateScreen() == False: break
+            self.clock.tick(self.fps)
+            pg.display.flip()
+
+        pg.time.wait(2000)
+
+        self.render()
+        Transitions.run("fadeInSpin", 2)
+        Transitions.updateScreen()
+        self.clock.tick(self.fps)
 
         #Game Loop
         while running:
@@ -75,11 +129,20 @@ class GameEngine():
             if pressed[self.game_data.controls['HOME']]: key_events[10] = 1
 
             #Update and Render Game State
-            delta = 1 / float(self.clock.tick(self.fps))
-            self.game_data.delta_sum += 1
-            if self.game_data.delta_sum > 10000: self.game_data.delta_sum = 0
-            self.update(delta, key_events)
-            self.render()
+
+            if Transitions.updateScreen() == False:
+                delta = 1 / float(self.clock.tick(self.fps))
+                self.game_data.delta_sum += 1
+                if self.game_data.delta_sum > 10000: self.game_data.delta_sum = 0
+                self.update(delta, key_events)
+                self.render()
+            else:
+                self.clock.tick(self.fps)
+
+            # Debugging Information
+            if self.game_data.debug:
+                fps_text = GameAssets.font_0.render(str(int(self.clock.get_fps())), False, (255, 255, 255))
+                self.screen.blit(fps_text, (780, 2))
 
             pg.display.flip()
 
@@ -101,10 +164,5 @@ class GameEngine():
         Method used to render game state.
 
         '''
-        self.screen.fill((0, 0, 0))
+        self.screen.fill((0,0,0))
         self.game_data.frame_current.render(self.screen)
-
-        # Debugging Information
-        if self.game_data.debug:
-            fps_text = GameFonts.font_0.render(str(int(self.clock.get_fps())), False, (255, 255, 255))
-            self.screen.blit(fps_text, (780, 2))
