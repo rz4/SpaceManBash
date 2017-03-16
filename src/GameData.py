@@ -35,7 +35,7 @@ class GameData():
             'UP' : pg.K_w,
             'DOWN' : pg.K_s,
             'CROUCH' : pg.K_LALT,
-            'ATTACK' : pg.K_RSHIFT,
+            'ATTACK' : pg.K_j,
             'JUMP' : pg.K_SPACE,
             'SPRINT' : pg.K_LSHIFT,
             'PAUSE' : pg.K_ESCAPE,
@@ -177,6 +177,8 @@ class GameData():
         except Exception as e:
             print("Could Load Level:", self.level_index)
             print(e)
+        pg.mixer.music.load("../data/music/music_0.mp3")
+        pg.mixer.music.play()
 
     def save_level(self):
         '''

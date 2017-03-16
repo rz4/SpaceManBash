@@ -34,6 +34,12 @@ class GameAssets:
     smb_right_idle = None
     smb_left_run = None
     smb_right_run = None
+    smb_left_jump = None
+    smb_right_jump = None
+    smb_left_hang = None
+    smb_right_hang = None
+    smb_swing_hang = None
+    smb_swing_hang = None
 
     beep = None
     swing = None
@@ -96,6 +102,30 @@ class GameAssets:
         GameAssets.smb_right_run.makeTransformsPermanent()
         GameAssets.smb_left_run.play()
         GameAssets.smb_right_run.play()
+
+        frames = pyganim.getImagesFromSpriteSheet("../data/sprites/smb_2.png", rows=1, cols=8, rects=[])
+        GameAssets.smb_left_swing = pyganim.PygAnimation(list(zip(frames, [100, 55, 55, 55, 100, 100, 55, 55])), loop=False)
+        GameAssets.smb_right_swing = GameAssets.smb_left_swing.getCopy()
+        GameAssets.smb_right_swing.flip(True, False)
+        GameAssets.smb_right_swing.makeTransformsPermanent()
+        GameAssets.smb_left_swing.play()
+        GameAssets.smb_right_swing.play()
+
+        frames = pyganim.getImagesFromSpriteSheet("../data/sprites/smb_3.png", rows=1, cols=6, rects=[])
+        GameAssets.smb_left_jump = pyganim.PygAnimation(list(zip(frames, [30, 20, 20, 100, 200, 5000])), loop=True)
+        GameAssets.smb_right_jump = GameAssets.smb_left_jump.getCopy()
+        GameAssets.smb_right_jump.flip(True, False)
+        GameAssets.smb_right_jump.makeTransformsPermanent()
+        GameAssets.smb_left_jump.play()
+        GameAssets.smb_right_jump.play()
+
+        frames = pyganim.getImagesFromSpriteSheet("../data/sprites/smb_4.png", rows=1, cols=6, rects=[])
+        GameAssets.smb_left_hang = pyganim.PygAnimation(list(zip(frames, [2000, 200, 200, 200, 200, 200])), loop=True)
+        GameAssets.smb_right_hang = GameAssets.smb_left_hang.getCopy()
+        GameAssets.smb_right_hang.flip(True, False)
+        GameAssets.smb_right_hang.makeTransformsPermanent()
+        GameAssets.smb_left_hang.play()
+        GameAssets.smb_right_hang.play()
 
         GameAssets.beep = pg.mixer.Sound("../data/music/beep.wav")
         GameAssets.swing = pg.mixer.Sound("../data/music/swing.wav")

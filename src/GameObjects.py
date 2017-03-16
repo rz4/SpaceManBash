@@ -84,34 +84,60 @@ class Player(GameObject):
         self.physics = True
         self.debug_color = (0, 255, 0)
         self.anim_index = 0
+        self.attacking = False
 
     def update(self, delta, keys, game_data):
         '''
         '''
         # Player Game Logic
         limit = 150
-        if keys[9] and self.on_ground(game_data) and self.acc[0] < 20: self.acc[0] *= 1.015
-        if (not keys[9] or not self.on_ground(game_data) ) and self.acc[0] > 12.0: self.acc[0] -= 60
+        on_ground = self.on_ground(game_data)
+        if keys[9] and on_ground and self.acc[0] < 20: self.acc[0] *= 1.015
+        if (not keys[9] or not on_ground) and self.acc[0] > 12.0: self.acc[0] -= 60
         if self.acc[0] < 12.0: self.acc[0] = 12.0
-        if keys[0] and self.on_ground(game_data): self.vel[1] = -150
+        if keys[0] and on_ground:
+            ga.smb_left_jump.stop()
+            ga.smb_right_jump.stop()
+            ga.smb_left_jump.play()
+            ga.smb_right_jump.play()
+            self.vel[1] = -150
         if keys[4] and self.vel[0] > -limit:
-            if self.on_ground(game_data): self.vel[0] -= self.acc[0]
+            if on_ground: self.vel[0] -= self.acc[0]
             else: self.vel[0] -= 5
         if keys[5] and self.vel[0] < limit:
-            if self.on_ground(game_data): self.vel[0] += self.acc[0]
+            if on_ground: self.vel[0] += self.acc[0]
             else: self.vel[0] += 5
+
+        if keys[1]:
+            self.attacking = True
+            ga.smb_left_swing.stop()
+            ga.smb_right_swing.stop()
+            ga.smb_left_swing.play()
+            ga.smb_right_swing.play()
 
         super().update(delta, keys, game_data)
         game_data.center_camera_on_game_object(self)
         Player.position = self.get_pos()
 
+        if ga.smb_left_swing.isFinished() or ga.smb_right_swing.isFinished(): self.attacking = False
+
         # Animation Logic
         if self.last_delta[0] > 0:
             self.anim_index = 0
             if abs(self.vel[0]) > 10: self.anim_index = 2
+            if not on_ground: self.anim_index = 4
+            else:
+                if self.last_delta[1] < -1: self.anim_index = 4
+                if self.last_delta[1] > 1: self.anim_index = 7
+            if self.attacking: self.anim_index = 8
         else:
             self.anim_index = 1
             if abs(self.vel[0]) > 10: self.anim_index = 3
+            if not on_ground: self.anim_index = 5
+            else:
+                if self.last_delta[1] < -1: self.anim_index = 5
+                if self.last_delta[1] > 1: self.anim_index = 6
+            if self.attacking: self.anim_index = 9
 
     def render(self, screen, game_data):
         '''
@@ -133,6 +159,30 @@ class Player(GameObject):
             x_prime = draw_rect[0]
             y_prime = draw_rect[1] - 10
             ga.smb_right_run.blit(screen, (x_prime, y_prime))
+        if self.anim_index == 4:
+            x_prime = draw_rect[0] - 10
+            y_prime = draw_rect[1] - 10
+            ga.smb_left_jump.blit(screen, (x_prime, y_prime))
+        if self.anim_index == 5:
+            x_prime = draw_rect[0]
+            y_prime = draw_rect[1] - 10
+            ga.smb_right_jump.blit(screen, (x_prime, y_prime))
+        if self.anim_index == 6:
+            x_prime = draw_rect[0] - 10
+            y_prime = draw_rect[1] - 10
+            ga.smb_left_hang.blit(screen, (x_prime, y_prime))
+        if self.anim_index == 7:
+            x_prime = draw_rect[0]
+            y_prime = draw_rect[1] - 10
+            ga.smb_right_hang.blit(screen, (x_prime, y_prime))
+        if self.anim_index == 8:
+            x_prime = draw_rect[0] - 30
+            y_prime = draw_rect[1] - 10
+            ga.smb_left_swing.blit(screen, (x_prime, y_prime))
+        if self.anim_index == 9:
+            x_prime = draw_rect[0] - 65
+            y_prime = draw_rect[1] - 10
+            ga.smb_right_swing.blit(screen, (x_prime, y_prime))
         super().render(screen, game_data)
 
     def on_ground(self, game_data):
@@ -256,7 +306,7 @@ class Wall(GameObject):
                 if abs(delta_x) < abs(delta_y):
                     go.set_pos(go.rect[0] + delta_x, go.rect[1])
                     go.vel[0] = -go.vel[0] * (1 - self.bounce)
-                    go.vel[1] = go.vel[1] * (1 - self.friction * 0.25)
+                    go.vel[1] = go.vel[1] * (1 - self.friction * 0.5)
                 else:
                     go.set_pos(go.rect[0], go.rect[1] + delta_y)
                     go.vel[1] = -go.vel[1] * (1 - self.bounce)
