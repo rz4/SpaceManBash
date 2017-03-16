@@ -350,6 +350,7 @@ class Floor(GameObject):
             self.wall_img = pg.transform.scale(self.wall_img, (draw_rect[2],  draw_rect[3]))
             screen.blit(self.wall_img, (draw_rect[0], draw_rect[1]))
         super().render(screen, game_data)
+
 class Lava_Pit(GameObject):
     """
     """
@@ -403,6 +404,7 @@ class Lava_Pit(GameObject):
     def render(self, screen, game_data):
         '''
         '''
+        if not self.on_screen(game_data): return
         draw_rect = self.rect.astype(int) + game_data.camera_pos.astype(int)
         anim = ga.animate(self.lava, self.anim_speed, game_data.delta_sum)
 

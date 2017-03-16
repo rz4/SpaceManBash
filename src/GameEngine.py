@@ -37,6 +37,7 @@ class GameEngine():
 
         pg.mixer.init()
         pg.mixer.music.load("../data/music/test.mp3")
+        pg.mixer.music.set_volume(0.25)
 
 
         #Initiate Game Assets
@@ -52,57 +53,58 @@ class GameEngine():
         self.clock = pg.time.Clock()
 
         # Intro Animation
-        logo = pg.image.load("../doc/logo.png").convert()
-        logo.set_colorkey((0, 0, 0))
-        self.screen.fill((252,240,228))
-        self.screen.blit(logo, (250, 150))
+        if self.game_data.debug == False:
+            logo = pg.image.load("../doc/logo.png").convert()
+            logo.set_colorkey((0, 0, 0))
+            self.screen.fill((252,240,228))
+            self.screen.blit(logo, (250, 150))
 
-        Transitions.run("fadeIn", 1.5)
-        while(True):
-            if Transitions.updateScreen() == False: break
+            Transitions.run("fadeIn", 1.5)
+            while(True):
+                if Transitions.updateScreen() == False: break
+                self.clock.tick(self.fps)
+                pg.display.flip()
+
+            pg.time.wait(2000)
+
+            Transitions.run("fadeOut", 1.5)
+            while(True):
+                if Transitions.updateScreen() == False: break
+                self.clock.tick(self.fps)
+                pg.display.flip()
+
+            pg.time.wait(1000)
+
+            self.screen.fill((0,0,0))
+            text = GameAssets.font_1.render("Script Kitties Entertainment Presents:", False, (255, 255, 255))
+            self.screen.blit(text, (200, 250))
+            pg.mixer.music.play()
+
+            Transitions.run("fadeIn", 1.5)
+            while(True):
+                if Transitions.updateScreen() == False: break
+                self.clock.tick(self.fps)
+                pg.display.flip()
+
+            pg.time.wait(1500)
+
+            Transitions.run("fadeOut",  1.5)
+            while(True):
+                if Transitions.updateScreen() == False: break
+                self.clock.tick(self.fps)
+                pg.display.flip()
+
+            pg.time.wait(2000)
+
+            self.render()
+            Transitions.run("fadeInSpin", 2)
+            Transitions.updateScreen()
             self.clock.tick(self.fps)
-            pg.display.flip()
-
-        pg.time.wait(2000)
-
-        Transitions.run("fadeOut", 1.5)
-        while(True):
-            if Transitions.updateScreen() == False: break
-            self.clock.tick(self.fps)
-            pg.display.flip()
-
-        pg.time.wait(1000)
-
-        self.screen.fill((0,0,0))
-        text = GameAssets.font_1.render("Script Kitties Entertainment Presents:", False, (255, 255, 255))
-        self.screen.blit(text, (200, 250))
-        pg.mixer.music.play()
-
-        Transitions.run("fadeIn", 1.5)
-        while(True):
-            if Transitions.updateScreen() == False: break
-            self.clock.tick(self.fps)
-            pg.display.flip()
-
-        pg.time.wait(1500)
-
-        Transitions.run("fadeOut",  1.5)
-        while(True):
-            if Transitions.updateScreen() == False: break
-            self.clock.tick(self.fps)
-            pg.display.flip()
-
-        pg.time.wait(2000)
-
-        self.render()
-        Transitions.run("fadeInSpin", 2)
-        Transitions.updateScreen()
-        self.clock.tick(self.fps)
 
         #Game Loop
         while running:
             # Key Events
-            key_events = [0 for i in range(len(self.game_data.controls))]
+            key_events = [0 for i in range(len(self.game_data.controls)+4)]
 
             # Key Pressed Events
             for event in pg.event.get():
@@ -117,6 +119,14 @@ class GameEngine():
                         key_events[2] = 1
                     if event.key == self.game_data.controls['ENTER']:
                         key_events[3] = 1
+                    if event.key == self.game_data.controls['UP']:
+                        key_events[11] = 1
+                    if event.key == self.game_data.controls['DOWN']:
+                        key_events[12] = 1
+                    if event.key == self.game_data.controls['LEFT']:
+                        key_events[13] = 1
+                    if event.key == self.game_data.controls['RIGHT']:
+                        key_events[14] = 1
 
             # Key Held Events
             pressed = pg.key.get_pressed()

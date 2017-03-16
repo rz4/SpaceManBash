@@ -90,7 +90,7 @@ def updateScreen():
 			if transition == "fadeOutUp":
 				transition_data.screen.set_alpha(255-255*time_ratio)
 				rect1 = transition_data.screen.get_rect()
-				transition_data.current_screen = pygame.transform.smoothscale(transition_data.screen, [int(rect1[2]*(1+time_ratio)), int(rect1[3]*(1+time_ratio))])
+				transition_data.current_screen = pygame.transform.smoothscale(transition_data.screen, [int(rect1[2]*(1+time_ratio*15)), int(rect1[3]*(1+time_ratio* 15))])
 			elif transition == "fadeOutDown":
 				transition_data.screen.set_alpha(255-255*time_ratio)
 				rect1 = transition_data.screen.get_rect()

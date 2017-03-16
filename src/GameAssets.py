@@ -11,6 +11,7 @@ class GameAssets:
 
     font_0 = None
     font_1 = None
+    font_2 = None
 
     flame = None
 
@@ -32,12 +33,16 @@ class GameAssets:
     smb_left_idle = None
     smb_right_idle = None
 
+    beep = None
+    swing = None
+
     def init():
         '''
         '''
         pg.font.init()
-        GameAssets.font_0 = pg.font.SysFont("Comic Sans MS", 20)
-        GameAssets.font_1 = pg.font.SysFont("Comic Sans MS", 30)
+        GameAssets.font_0 = pg.font.Font(None, 20)
+        GameAssets.font_1 = pg.font.Font("../data/sprites/Gasalt-Black.ttf", 30)
+        GameAssets.font_2 = pg.font.Font("../data/sprites/Gasalt-Regular.ttf", 40)
 
         GameAssets.space_img = SpriteSheet('../data/sprites/space.png').get_image(0,0,512,488)
         GameAssets.title = SpriteSheet('../data/sprites/title.png').get_image(0,0,512,488)
@@ -82,6 +87,10 @@ class GameAssets:
         GameAssets.smb_right_idle.makeTransformsPermanent()
         GameAssets.smb_left_idle.play()
         GameAssets.smb_right_idle.play()
+
+        GameAssets.beep = pg.mixer.Sound("../data/music/beep.wav")
+        GameAssets.swing = pg.mixer.Sound("../data/music/swing.wav")
+        GameAssets.swing.set_volume(1.0)
 
     @staticmethod
     def animate(animation, speed, delta_sum):
