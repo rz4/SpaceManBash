@@ -106,8 +106,12 @@ class Player(GameObject):
         Player.position = self.get_pos()
 
         # Animation Logic
-        if self.last_delta[0] > 0: self.anim_index = 0
-        else: self.anim_index = 1
+        if self.last_delta[0] > 0:
+            self.anim_index = 0
+            if abs(self.vel[0]) > 10: self.anim_index = 2
+        else:
+            self.anim_index = 1
+            if abs(self.vel[0]) > 10: self.anim_index = 3
 
     def render(self, screen, game_data):
         '''
@@ -121,6 +125,14 @@ class Player(GameObject):
             x_prime = draw_rect[0]
             y_prime = draw_rect[1] - 12
             ga.smb_right_idle.blit(screen, (x_prime, y_prime))
+        if self.anim_index == 2:
+            x_prime = draw_rect[0] - 10
+            y_prime = draw_rect[1] - 10
+            ga.smb_left_run.blit(screen, (x_prime, y_prime))
+        if self.anim_index == 3:
+            x_prime = draw_rect[0]
+            y_prime = draw_rect[1] - 10
+            ga.smb_right_run.blit(screen, (x_prime, y_prime))
         super().render(screen, game_data)
 
     def on_ground(self, game_data):

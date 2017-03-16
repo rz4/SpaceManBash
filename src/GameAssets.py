@@ -32,6 +32,8 @@ class GameAssets:
 
     smb_left_idle = None
     smb_right_idle = None
+    smb_left_run = None
+    smb_right_run = None
 
     beep = None
     swing = None
@@ -80,13 +82,20 @@ class GameAssets:
         GameAssets.lava = SpriteSheet("../data/sprites/Lava_floor.png").get_animation(0, 0, 128, 138, 11, 120, 120)
 
         frames = pyganim.getImagesFromSpriteSheet("../data/sprites/smb_0.png", rows=1, cols=8, rects=[])
-        GameAssets.smb_left_idle = pyganim.PygAnimation(list(zip(frames, [1000, 125, 700, 150, 2000, 5,800, 500])))
-
+        GameAssets.smb_left_idle = pyganim.PygAnimation(list(zip(frames, [1000, 125, 700, 150, 2000, 5,800, 2000])))
         GameAssets.smb_right_idle = GameAssets.smb_left_idle.getCopy()
         GameAssets.smb_right_idle.flip(True, False)
         GameAssets.smb_right_idle.makeTransformsPermanent()
         GameAssets.smb_left_idle.play()
         GameAssets.smb_right_idle.play()
+
+        frames = pyganim.getImagesFromSpriteSheet("../data/sprites/smb_1.png", rows=1, cols=8, rects=[])
+        GameAssets.smb_left_run = pyganim.PygAnimation(list(zip(frames, [75 for i in range(8)])))
+        GameAssets.smb_right_run = GameAssets.smb_left_run.getCopy()
+        GameAssets.smb_right_run.flip(True, False)
+        GameAssets.smb_right_run.makeTransformsPermanent()
+        GameAssets.smb_left_run.play()
+        GameAssets.smb_right_run.play()
 
         GameAssets.beep = pg.mixer.Sound("../data/music/beep.wav")
         GameAssets.swing = pg.mixer.Sound("../data/music/swing.wav")
