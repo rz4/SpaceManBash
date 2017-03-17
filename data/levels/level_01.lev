@@ -1,5 +1,7 @@
 {
-
+	"music" : "music_0.mp3",
+	"background" : "background_0",
+	"midground" : "midground_0",
 	"camera_pos": [0.0, 0.0, 0.0, 0.0],
   "camera_limits": [-4200.0, 0, 0, 1000.0],
 

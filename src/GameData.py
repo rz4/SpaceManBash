@@ -1,12 +1,13 @@
 '''
 GameData.py
-Last Updated: 12/17/17
+Last Updated: 3/16/17
 
 '''
 
 import json, os
 import numpy as np
 import pygame as pg
+from GameAssets import GameAssets as ga
 
 class GameData():
     """
@@ -36,6 +37,7 @@ class GameData():
             'DOWN' : pg.K_s,
             'CROUCH' : pg.K_LALT,
             'ATTACK' : pg.K_j,
+            'ALTATTACK' : pg.K_k,
             'JUMP' : pg.K_SPACE,
             'SPRINT' : pg.K_LSHIFT,
             'PAUSE' : pg.K_ESCAPE,
@@ -49,11 +51,15 @@ class GameData():
 
         # Level Data
         self.levels = []
-        self.level_index = 1
+        self.level_index = 3
+        self.level_background = None
+        self.level_midground = None
         self.camera_pos = np.array([0.0, 0.0, 0.0, 0.0])
         self.camera_limits = [0.0, 0.0, 0.0, 0.0]
         self.game_objects = []
         self.collisions = {}
+
+        # Player Data
 
     def switch_frame(self, frame):
         '''
@@ -122,10 +128,11 @@ class GameData():
 
         '''
         try:
-            with open("../data/" + self.saves[self.save_index], "w") as f:
-                for level_data in self.levels:
-                    json_dump = json.dumps(level_data)
-                    f.write(json_dump + '\n')
+            with open("../data/saves/" + self.saves[self.save_index], "w") as f:
+                data = {}
+                data["level_index"] = self.level_index
+                json_dump = json.dumps(data)
+                f.write(json_dump + '\n')
         except Exception as e:
             print("Could Save Save Data:", filename)
             print(e)
@@ -138,15 +145,15 @@ class GameData():
             filename    ;str    save filename
         '''
         try:
-            with open("../data/" + self.saves[self.save_index], "r") as f:
-                i = 0
-                for data in f:
-                    if i > 0: self.levels.append(level_data)
+            with open("../data/saves/" + self.saves[self.save_index], "r") as f:
+                for json_dump in f:
+                    data = json.loads(json_dump)
+                    self.level_index = data["level_index"]
         except Exception as e:
             print("Could Load Save Data:", filename)
             print(e)
 
-    def load(self):
+    def load_game_data(self):
         '''
         Method loads all game level data from file.
 
@@ -174,18 +181,21 @@ class GameData():
                 class_ = getattr(module, go[0])
                 instance = class_(go[1:])
                 self.add_game_object(instance)
+            pg.mixer.music.load("../data/music/"+data['music'])
+            pg.mixer.music.play()
+            self.level_background = getattr(ga, data['background'])
+            self.level_midground = getattr(ga, data['midground'])
         except Exception as e:
-            print("Could Load Level:", self.level_index)
+            print("Couldn't Load Level:", self.level_index)
             print(e)
-        pg.mixer.music.load("../data/music/music_0.mp3")
-        pg.mixer.music.play()
 
-    def save_level(self):
+    def reset_level(self):
         '''
-        Method saves current level.
+        Method resets current level.
 
         '''
-        pass
+        self.frame_current.level_loaded = False
+        self.load_level()
 
     def switch_level(self, index):
         '''
@@ -196,6 +206,8 @@ class GameData():
 
         '''
         self.level_index = index
+        self.frame_current.level_loaded = False
+        self.load_level()
 
     def add_game_object(self, game_object):
         '''

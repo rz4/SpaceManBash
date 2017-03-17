@@ -9,70 +9,30 @@ import pyganim
 
 class GameAssets:
 
-    font_0 = None
-    font_1 = None
-    font_2 = None
-
-    flame = None
-
-    mario_rest = None
-    mario_slide = None
-
-    unicorn_walk_left = None
-    unicorn_walk_right = None
-    unicorn_walk_left = None
-    unicorn_walk_right =None
-    unicorn_walk_left = None
-    unicorn_walk_right = None
-    unicorn_walk_left = None
-    unicorn_walk_right = None
-
-    space_img = None
-    title = None
-
-    smb_left_idle = None
-    smb_right_idle = None
-    smb_left_run = None
-    smb_right_run = None
-    smb_left_jump = None
-    smb_right_jump = None
-    smb_left_hang = None
-    smb_right_hang = None
-    smb_swing_hang = None
-    smb_swing_hang = None
-
-    beep = None
-    swing = None
-
-    def init():
+    def init(dim):
         '''
         '''
+
+        # Load Fonts
         pg.font.init()
         GameAssets.font_0 = pg.font.Font(None, 20)
         GameAssets.font_1 = pg.font.Font("../data/sprites/Gasalt-Black.ttf", 30)
         GameAssets.font_2 = pg.font.Font("../data/sprites/Gasalt-Regular.ttf", 40)
 
-        GameAssets.space_img = SpriteSheet('../data/sprites/space.png').get_image(0,0,512,488)
-        GameAssets.title = SpriteSheet('../data/sprites/title.png').get_image(0,0,512,488)
+        # Load Static Images
+        GameAssets.title = pg.image.load("../data/sprites/title.png").convert()
+        GameAssets.title.set_colorkey((0, 0, 0))
 
-        GameAssets.flame = SpriteSheet('../data/sprites/space_fire.png').get_animation(782, 170, 24, 50, 4, 22, 50)
-        #GameAssets.mario_rest = SpriteSheet('../data/sprites/mario_animations.png').get_animation(0, 0, 50, 30, 2, 50, 30)
-        #GameAssets.mario_rest += SpriteSheet('../data/sprites/mario_animations.png').get_animation(0, 0, 50, 30, 2, 50, 30)
-        #GameAssets.mario_slide = SpriteSheet('../data/sprites/mario_animations.png').get_animation(0, 0, 50, 30, 14, 50, 30)
-        GameAssets.unicorn_still_left = SpriteSheet("../data/sprites/unicorn(1).png").get_animation(0, 0, 190, 125, 7, 160, 120,flip= True)
-        GameAssets.unicorn_still_right = SpriteSheet("../data/sprites/unicorn(1).png").get_animation(0, 0, 190, 125, 7, 160, 120)
-        GameAssets.unicorn_walk_left = SpriteSheet("../data/sprites/unicorn(1).png").get_animation(0, 150, 190, 125, 8, 160, 120,flip= True)
-        GameAssets.unicorn_walk_right = SpriteSheet("../data/sprites/unicorn(1).png").get_animation(0, 150, 190, 125, 8, 160, 120)
-        GameAssets.unicorn_attack_left = SpriteSheet("../data/sprites/unicorn(1).png").get_animation(0, 285, 190, 155, 7, 160, 120,flip= True)
-        GameAssets.unicorn_attack_right = SpriteSheet("../data/sprites/unicorn(1).png").get_animation(0, 285, 190, 155, 7, 160, 120)
-        GameAssets.unicorn_die_left = SpriteSheet("../data/sprites/unicorn(1).png").get_animation(0, 460, 175, 145, 7, 160, 120,flip= True)
-        GameAssets.unicorn_die_right = SpriteSheet("../data/sprites/unicorn(1).png").get_animation(0, 460, 175, 145, 7, 160, 120)
+        GameAssets.wall = pg.image.load('../data/sprites/metal_block.png').convert()
 
-        GameAssets.sheep_walk_left = SpriteSheet("../data/sprites/sheep.png").get_animation(119, 41, 40, 38, 3, 120, 120)
-        GameAssets.sheep_walk_right = SpriteSheet("../data/sprites/sheep.png").get_animation(119, 41, 40, 38, 3, 120, 120, flip= True)
-        GameAssets.sheep_attack_left = SpriteSheet("../data/sprites/sheep.png").get_animation(239, 361, 40, 38, 10, 120, 120)
-        GameAssets.sheep_attack_right = SpriteSheet("../data/sprites/sheep.png").get_animation(239, 361, 40, 38, 10, 120, 120, flip= True)
-        GameAssets.sheep_spin = SpriteSheet("../data/sprites/sheep.png").get_animation(0, 320, 40, 39, 16, 120, 120)
+        GameAssets.background_0 = pg.image.load("../data/sprites/space2.png").convert()
+        GameAssets.background_0 = pg.transform.scale(GameAssets.background_0, (dim[0]+900,  dim[1]+100))
+
+        GameAssets.midground_0 = pg.image.load("../data/sprites/stationbckground.png").convert()
+        GameAssets.midground_0 = pg.transform.scale(GameAssets.midground_0, (dim[0]+2000,  dim[1]+500))
+        GameAssets.midground_0.set_colorkey((0, 0, 0))
+
+        # Load Animations
 
         GameAssets.dragon_still_left = SpriteSheet("../data/sprites/dragon.png").get_animation(7, 18, 60, 51, 6, 120, 120, flip=True)
         GameAssets.dragon_still_right = SpriteSheet("../data/sprites/dragon.png").get_animation(7, 18, 60, 51, 6, 120, 120)
@@ -85,7 +45,10 @@ class GameAssets:
         GameAssets.dragon_die_left = SpriteSheet("../data/sprites/dragon.png").get_animation(167, 87, 80, 70, 2, 120, 120, flip=True)
         GameAssets.dragon_die_right = SpriteSheet("../data/sprites/dragon.png").get_animation(167, 87, 80, 70, 2, 120, 120)
 
-        GameAssets.lava = SpriteSheet("../data/sprites/Lava_floor.png").get_animation(0, 0, 128, 138, 11, 120, 120)
+        frames = pyganim.getImagesFromSpriteSheet("../data/sprites/Lava_floor.png", rows=1, cols=11, rects=[])
+        GameAssets.lava = pyganim.PygAnimation(list(zip(frames, [100 for i in range(11)])))
+        GameAssets.lava.set_colorkey((0,0,0))
+        GameAssets.lava.play()
 
         frames = pyganim.getImagesFromSpriteSheet("../data/sprites/smb_0.png", rows=1, cols=8, rects=[])
         GameAssets.smb_left_idle = pyganim.PygAnimation(list(zip(frames, [1000, 125, 700, 150, 2000, 5,800, 2000])))
@@ -104,12 +67,20 @@ class GameAssets:
         GameAssets.smb_right_run.play()
 
         frames = pyganim.getImagesFromSpriteSheet("../data/sprites/smb_2.png", rows=1, cols=8, rects=[])
-        GameAssets.smb_left_swing = pyganim.PygAnimation(list(zip(frames, [100, 55, 55, 55, 100, 100, 55, 55])), loop=False)
+        GameAssets.smb_left_swing = pyganim.PygAnimation(list(zip(frames, [30, 30, 30, 20, 100, 55, 30, 30])), loop=False)
         GameAssets.smb_right_swing = GameAssets.smb_left_swing.getCopy()
         GameAssets.smb_right_swing.flip(True, False)
         GameAssets.smb_right_swing.makeTransformsPermanent()
         GameAssets.smb_left_swing.play()
         GameAssets.smb_right_swing.play()
+
+        frames = pyganim.getImagesFromSpriteSheet("../data/sprites/smb_5.png", rows=1, cols=8, rects=[])
+        GameAssets.smb_left_bash = pyganim.PygAnimation(list(zip(frames, [30, 30, 30, 30, 20, 20, 20, 100])), loop=False)
+        GameAssets.smb_right_bash = GameAssets.smb_left_bash.getCopy()
+        GameAssets.smb_right_bash.flip(True, False)
+        GameAssets.smb_right_bash.makeTransformsPermanent()
+        GameAssets.smb_left_bash.play()
+        GameAssets.smb_right_bash.play()
 
         frames = pyganim.getImagesFromSpriteSheet("../data/sprites/smb_3.png", rows=1, cols=6, rects=[])
         GameAssets.smb_left_jump = pyganim.PygAnimation(list(zip(frames, [30, 20, 20, 100, 200, 5000])), loop=True)
@@ -127,9 +98,20 @@ class GameAssets:
         GameAssets.smb_left_hang.play()
         GameAssets.smb_right_hang.play()
 
+        frames = pyganim.getImagesFromSpriteSheet("../data/sprites/smb_6.png", rows=1, cols=8, rects=[])
+        GameAssets.smb_left_death = pyganim.PygAnimation(list(zip(frames, [200, 100, 100, 100, 100, 100, 100, 1200])))
+        GameAssets.smb_right_death = GameAssets.smb_left_death.getCopy()
+        GameAssets.smb_right_death.flip(True, False)
+        GameAssets.smb_right_death.makeTransformsPermanent()
+        GameAssets.smb_left_death.play()
+        GameAssets.smb_right_death.play()
+
+        # Load Music
         GameAssets.beep = pg.mixer.Sound("../data/music/beep.wav")
         GameAssets.swing = pg.mixer.Sound("../data/music/swing.wav")
+        GameAssets.jump = pg.mixer.Sound("../data/music/jump.wav")
         GameAssets.swing.set_volume(1.0)
+        GameAssets.jump.set_volume(0.1)
 
     @staticmethod
     def animate(animation, speed, delta_sum):

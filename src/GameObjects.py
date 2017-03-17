@@ -1,7 +1,6 @@
 import pygame as pg
 import numpy as np
 from GameAssets import GameAssets as ga
-from GameAssets import GameAssets as gf
 
 class GameObject():
     """
@@ -33,7 +32,7 @@ class GameObject():
         draw_rect = self.rect.astype(int) + game_data.camera_pos.astype(int)
         if game_data.debug:
             pg.draw.rect(screen, self.debug_color, draw_rect.tolist(), 1)
-            t = gf.font_0.render(self.__class__.__name__, False, (255, 255, 255))
+            t = ga.font_0.render(self.__class__.__name__, False, (255, 255, 255))
             screen.blit(t, (draw_rect[0] + (-t.get_width()/2 + draw_rect[2]/2), draw_rect[1] + (-t.get_height()/2  + draw_rect[3]/2)))
 
     def set_pos(self, x , y):
@@ -84,7 +83,8 @@ class Player(GameObject):
         self.physics = True
         self.debug_color = (0, 255, 0)
         self.anim_index = 0
-        self.attacking = False
+        self.attack_1 = False
+        self.attack_2 = False
 
     def update(self, delta, keys, game_data):
         '''
@@ -96,6 +96,7 @@ class Player(GameObject):
         if (not keys[9] or not on_ground) and self.acc[0] > 12.0: self.acc[0] -= 60
         if self.acc[0] < 12.0: self.acc[0] = 12.0
         if keys[0] and on_ground:
+            ga.jump.play()
             ga.smb_left_jump.stop()
             ga.smb_right_jump.stop()
             ga.smb_left_jump.play()
@@ -108,18 +109,28 @@ class Player(GameObject):
             if on_ground: self.vel[0] += self.acc[0]
             else: self.vel[0] += 5
 
-        if keys[1]:
-            self.attacking = True
+        if keys[1] and not self.attack_1 and not self.attack_2:
+            ga.swing.play()
+            self.attack_1 = True
             ga.smb_left_swing.stop()
             ga.smb_right_swing.stop()
             ga.smb_left_swing.play()
             ga.smb_right_swing.play()
 
+        if keys[11] and not self.attack_1 and not self.attack_2:
+            ga.swing.play()
+            self.attack_2 = True
+            ga.smb_left_bash.stop()
+            ga.smb_right_bash.stop()
+            ga.smb_left_bash.play()
+            ga.smb_right_bash.play()
+
         super().update(delta, keys, game_data)
         game_data.center_camera_on_game_object(self)
         Player.position = self.get_pos()
 
-        if ga.smb_left_swing.isFinished() or ga.smb_right_swing.isFinished(): self.attacking = False
+        if ga.smb_left_swing.isFinished() or ga.smb_right_swing.isFinished(): self.attack_1 = False
+        if ga.smb_left_bash.isFinished() or ga.smb_right_bash.isFinished(): self.attack_2 = False
 
         # Animation Logic
         if self.last_delta[0] > 0:
@@ -129,7 +140,8 @@ class Player(GameObject):
             else:
                 if self.last_delta[1] < -1: self.anim_index = 4
                 if self.last_delta[1] > 1: self.anim_index = 7
-            if self.attacking: self.anim_index = 8
+            if self.attack_1: self.anim_index = 8
+            if self.attack_2: self.anim_index = 10
         else:
             self.anim_index = 1
             if abs(self.vel[0]) > 10: self.anim_index = 3
@@ -137,7 +149,8 @@ class Player(GameObject):
             else:
                 if self.last_delta[1] < -1: self.anim_index = 5
                 if self.last_delta[1] > 1: self.anim_index = 6
-            if self.attacking: self.anim_index = 9
+            if self.attack_1: self.anim_index = 9
+            if self.attack_2: self.anim_index = 11
 
     def render(self, screen, game_data):
         '''
@@ -183,13 +196,29 @@ class Player(GameObject):
             x_prime = draw_rect[0] - 65
             y_prime = draw_rect[1] - 10
             ga.smb_right_swing.blit(screen, (x_prime, y_prime))
+        if self.anim_index == 10:
+            x_prime = draw_rect[0] - 30
+            y_prime = draw_rect[1] - 10
+            ga.smb_left_bash.blit(screen, (x_prime, y_prime))
+        if self.anim_index == 11:
+            x_prime = draw_rect[0] - 65
+            y_prime = draw_rect[1] - 10
+            ga.smb_right_bash.blit(screen, (x_prime, y_prime))
+        if self.anim_index == 12:
+            x_prime = draw_rect[0] - 10
+            y_prime = draw_rect[1] - 12
+            ga.smb_left_death.blit(screen, (x_prime, y_prime))
+        if self.anim_index == 13:
+            x_prime = draw_rect[0]
+            y_prime = draw_rect[1] - 12
+            ga.smb_right_death.blit(screen, (x_prime, y_prime))
         super().render(screen, game_data)
 
     def on_ground(self, game_data):
         '''
         '''
         flag = False
-        ground_objects = ['Wall', 'Floor']
+        ground_objects = ['Wall', 'Floor', 'Lava_Pit']
         for i in ground_objects:
             for j in game_data.collisions[self]:
                 if j.__class__.__name__ == i:
@@ -276,6 +305,7 @@ class Enemy_Dragon(GameObject):
         return flag
 
 
+
 class Wall(GameObject):
     """
     """
@@ -287,7 +317,6 @@ class Wall(GameObject):
         self.solid = True
         self.bounce = args[4]
         self.friction = args[5]
-        self.wall_img = pg.image.load('../data/sprites/metal_block.png').convert()
 
     def update(self, delta, keys, game_data):
         '''
@@ -331,21 +360,33 @@ class Wall(GameObject):
         draw_rect = self.rect.astype(int) + game_data.camera_pos.astype(int)
         width = draw_rect[2]
         length = draw_rect[3]
+        dim = game_data.screen_dim
         if ((draw_rect[2] > 160) or (draw_rect[3] > 160)):
             repeat_x = int(width/100)
             repeat_y = int(length/100)
             width = int(width/repeat_x)
             length = int(length/repeat_y)
-            self.wall_img = pg.transform.scale(self.wall_img, (width,  length))
+            wall = pg.transform.scale(ga.wall, (width,  length))
             for i in range(0,repeat_x):
                 for j in range(0,repeat_y):
-                    screen.blit(self.wall_img, ((width*i)+draw_rect[0], (length*j)+draw_rect[1]))
+                    if ((width*i)+draw_rect[0] + draw_rect[2] > 0 and (width*i)+draw_rect[0] < dim[0] and (length*j)+draw_rect[1] + draw_rect[3] > 0 and (length*j)+draw_rect[1] < dim[1]):
+                        screen.blit(wall, ((width*i)+draw_rect[0], (length*j)+draw_rect[1]))
         else:
-            self.wall_img = pg.transform.scale(self.wall_img, (draw_rect[2],  draw_rect[3]))
-            screen.blit(self.wall_img, (draw_rect[0], draw_rect[1]))
+            wall = pg.transform.scale(ga.wall, (draw_rect[2],  draw_rect[3]))
+            screen.blit(wall, (draw_rect[0], draw_rect[1]))
         super().render(screen, game_data)
 
-class Floor(GameObject):
+class Floor(Wall):
+    """
+    """
+
+    def __init__(self, args):
+        '''
+        '''
+        super().__init__(args)
+
+
+class Lava_Pit(Wall):
     """
     """
 
@@ -356,119 +397,13 @@ class Floor(GameObject):
         self.solid = True
         self.bounce = args[4]
         self.friction = args[5]
-        self.wall_img = pg.image.load('../data/sprites/metal_block.png').convert()
-
-    def update(self, delta, keys, game_data):
-        '''
-        '''
-        tolerance = 0.0000000000001
-        for go in game_data.collisions[self]:
-            if go.solid and not issubclass(go.__class__, self.__class__) and not issubclass(self.__class__, go.__class__):
-                if go.rect[0] >= self.rect[0]:
-                    delta_x = self.rect[0] + self.rect[2] + tolerance - go.rect[0]
-                elif go.rect[0] < self.rect[0]:
-                    delta_x = -(go.rect[0] + go.rect[2] + tolerance - self.rect[0])
-                if go.rect[1] >= self.rect[1]:
-                    delta_y = self.rect[1] + self.rect[3] + tolerance - go.rect[1]
-                elif go.rect[1] < self.rect[1]:
-                    delta_y = -(go.rect[1] + go.rect[3] + tolerance - self.rect[1])
-                if abs(delta_x) < abs(delta_y):
-                    go.set_pos(go.rect[0] + delta_x, go.rect[1])
-                    go.vel[0] = -go.vel[0] * (1 - self.bounce)
-                else:
-                    go.set_pos(go.rect[0], go.rect[1] + delta_y)
-                    go.vel[1] = -go.vel[1] * (1 - self.bounce)
-                    go.vel[0] = go.vel[0] * (1 - self.friction)
-
-        super().update(delta, keys, game_data)
-
-    def set_bounce(self, b):
-        '''
-        '''
-        self.bounce = b
-
-    def set_friction(self, f):
-        '''
-        '''
-        self.friction = f
+        self.debug_color = (255, 0, 0)
 
     def render(self, screen, game_data):
         '''
         '''
         if not self.on_screen(game_data): return
         draw_rect = self.rect.astype(int) + game_data.camera_pos.astype(int)
-        width = draw_rect[2]
-        length = draw_rect[3]
-        if ((draw_rect[2] > 160) or (draw_rect[3] > 160)):
-            repeat_x = int(width/100)
-            repeat_y = int(length/100)
-            width = int(width/repeat_x)
-            length = int(length/repeat_y)
-            self.wall_img = pg.transform.scale(self.wall_img, (width,  length))
-            for i in range(0,repeat_x):
-                for j in range(0,repeat_y):
-                    screen.blit(self.wall_img, ((width*i)+draw_rect[0], (length*j)+draw_rect[1]))
-        else:
-            self.wall_img = pg.transform.scale(self.wall_img, (draw_rect[2],  draw_rect[3]))
-            screen.blit(self.wall_img, (draw_rect[0], draw_rect[1]))
-        super().render(screen, game_data)
-
-class Lava_Pit(GameObject):
-    """
-    """
-
-    def __init__(self, args):
-        '''
-        '''
-        super().__init__(args)
-        self.solid = True
-        self.bounce = args[4]
-        self.friction = args[5]
-        self.lava = ga.lava
-        self.anim_speed = 4
-
-    def update(self, delta, keys, game_data):
-        '''
-        '''
-        tolerance = 0.0000000000001
-        for go in game_data.collisions[self]:
-            if go.solid and not issubclass(go.__class__, self.__class__) and not issubclass(self.__class__, go.__class__):
-                if go.rect[0] >= self.rect[0]:
-                    delta_x = self.rect[0] + self.rect[2] + tolerance - go.rect[0]
-                elif go.rect[0] < self.rect[0]:
-                    delta_x = -(go.rect[0] + go.rect[2] + tolerance - self.rect[0])
-                if go.rect[1] >= self.rect[1]:
-                    delta_y = self.rect[1] + self.rect[3] + tolerance - go.rect[1]
-                elif go.rect[1] < self.rect[1]:
-                    delta_y = -(go.rect[1] + go.rect[3] + tolerance - self.rect[1])
-                if abs(delta_x) < abs(delta_y):
-                    go.set_pos(go.rect[0] + delta_x, go.rect[1])
-                    go.vel[0] = -go.vel[0] * (1 - self.bounce)
-                else:
-                    go.set_pos(go.rect[0], go.rect[1] + delta_y)
-                    go.vel[1] = -go.vel[1] * (1 - self.bounce)
-                    if delta_y < 0 and abs(go.vel[0]) < abs(self.vel[0]):
-                        go.vel[0] += self.vel[0] * self.friction
-                    else: go.vel[0] = go.vel[0] * (1 - self.friction)
-
-        super().update(delta, keys, game_data)
-
-    def set_bounce(self, b):
-        '''
-        '''
-        self.bounce = b
-
-    def set_friction(self, f):
-        '''
-        '''
-        self.friction = f
-
-    def render(self, screen, game_data):
-        '''
-        '''
-        if not self.on_screen(game_data): return
-        draw_rect = self.rect.astype(int) + game_data.camera_pos.astype(int)
-        anim = ga.animate(self.lava, self.anim_speed, game_data.delta_sum)
 
         width = draw_rect[2]
         length = draw_rect[3]
@@ -477,13 +412,9 @@ class Lava_Pit(GameObject):
             repeat_y = int(length/100)
             width = int(width/repeat_x)
             length = int(length/repeat_y)
-            anim = pg.transform.scale(anim, (width,  length))
             for i in range(0,repeat_x):
                 for j in range(0,repeat_y):
-                    screen.blit(anim, ((width*i)+draw_rect[0], (length*j)+draw_rect[1]))
-        else:
-            anim = pg.transform.scale(self.wall_img, (draw_rect[2],  draw_rect[3]))
-            screen.blit(anim, (draw_rect[0], draw_rect[1]))
+                    ga.lava.blit(screen, ((width*i)+draw_rect[0], (length*j)+draw_rect[1]))
         #super().render(screen, game_data)
 
 

@@ -28,21 +28,17 @@ class GameEngine():
         self.config_filename = config
         self.game_data = GameData()
         self.game_data.load_config(self.config_filename)
+        self.game_data.load_game_data()
 
         # Initiate Pygame
         pg.init()
+        pg.mixer.init()
         pg.display.set_caption(self.game_data.game_name)
         self.screen = pg.display.set_mode(self.game_data.screen_dim)
         Transitions.init(self.screen, self.game_data.screen_dim[0], self.game_data.screen_dim[1], [0,0,0])
 
-        pg.mixer.init()
-        pg.mixer.music.load("../data/music/test.mp3")
-        pg.mixer.music.set_volume(0.25)
-
-
         #Initiate Game Assets
-        GameAssets.init()
-        GameAssets.init()
+        GameAssets.init(self.game_data.screen_dim)
 
     def run(self):
         '''
@@ -78,6 +74,9 @@ class GameEngine():
             self.screen.fill((0,0,0))
             text = GameAssets.font_1.render("Script Kitties Entertainment Presents:", False, (255, 255, 255))
             self.screen.blit(text, (200, 250))
+
+            pg.mixer.music.load("../data/music/test.mp3")
+            pg.mixer.music.set_volume(0.25)
             pg.mixer.music.play()
 
             Transitions.run("fadeIn", 1.5)
@@ -115,18 +114,20 @@ class GameEngine():
                         key_events[0] = 1
                     if event.key == self.game_data.controls['ATTACK']:
                         key_events[1] = 1
+                    if event.key == self.game_data.controls['ALTATTACK']:
+                        key_events[11] = 1
                     if event.key == self.game_data.controls['PAUSE']:
                         key_events[2] = 1
                     if event.key == self.game_data.controls['ENTER']:
                         key_events[3] = 1
                     if event.key == self.game_data.controls['UP']:
-                        key_events[11] = 1
-                    if event.key == self.game_data.controls['DOWN']:
                         key_events[12] = 1
-                    if event.key == self.game_data.controls['LEFT']:
+                    if event.key == self.game_data.controls['DOWN']:
                         key_events[13] = 1
-                    if event.key == self.game_data.controls['RIGHT']:
+                    if event.key == self.game_data.controls['LEFT']:
                         key_events[14] = 1
+                    if event.key == self.game_data.controls['RIGHT']:
+                        key_events[15] = 1
 
             # Key Held Events
             pressed = pg.key.get_pressed()
