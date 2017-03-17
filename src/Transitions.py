@@ -104,7 +104,7 @@ def updateScreen():
 			elif transition == "fadeInSpin":
 				transition_data.screen.set_alpha(255*time_ratio)
 				transition_data.current_screen = transition_data.screen
-				transition_data.current_screen = pygame.transform.rotate(transition_data.current_screen, 600*(1/(time_ratio*time_ratio)))
+				transition_data.current_screen = pygame.transform.rotate(transition_data.current_screen, 1000*(1/(time_ratio*time_ratio)))
 
 			rect2 = transition_data.current_screen.get_rect()
 

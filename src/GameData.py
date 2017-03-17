@@ -51,7 +51,7 @@ class GameData():
 
         # Level Data
         self.levels = []
-        self.level_index = 3
+        self.level_index = 10
         self.level_background = None
         self.level_midground = None
         self.camera_pos = np.array([0.0, 0.0, 0.0, 0.0])

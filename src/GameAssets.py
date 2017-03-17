@@ -46,7 +46,7 @@ class GameAssets:
         GameAssets.dragon_die_right = SpriteSheet("../data/sprites/dragon.png").get_animation(167, 87, 80, 70, 2, 120, 120)
 
         frames = pyganim.getImagesFromSpriteSheet("../data/sprites/Lava_floor.png", rows=1, cols=11, rects=[])
-        GameAssets.lava = pyganim.PygAnimation(list(zip(frames, [100 for i in range(11)])))
+        GameAssets.lava = pyganim.PygAnimation(list(zip(frames, [200 for i in range(11)])))
         GameAssets.lava.set_colorkey((0,0,0))
         GameAssets.lava.play()
 
@@ -105,6 +105,38 @@ class GameAssets:
         GameAssets.smb_right_death.makeTransformsPermanent()
         GameAssets.smb_left_death.play()
         GameAssets.smb_right_death.play()
+
+        frames = pyganim.getImagesFromSpriteSheet("../data/sprites/es_0.png", rows=1, cols=8, rects=[])
+        GameAssets.es_left_idle = pyganim.PygAnimation(list(zip(frames, [120 for i in range(8)])))
+        GameAssets.es_right_idle = GameAssets.es_left_idle.getCopy()
+        GameAssets.es_right_idle.flip(True, False)
+        GameAssets.es_right_idle.makeTransformsPermanent()
+        GameAssets.es_left_idle.play()
+        GameAssets.es_right_idle.play()
+
+        frames = pyganim.getImagesFromSpriteSheet("../data/sprites/es_1.png", rows=1, cols=8, rects=[])
+        GameAssets.es_left_jump = pyganim.PygAnimation(list(zip(frames, [100 for i in range(8)])))
+        GameAssets.es_right_jump = GameAssets.es_left_jump.getCopy()
+        GameAssets.es_right_jump.flip(True, False)
+        GameAssets.es_right_jump.makeTransformsPermanent()
+        GameAssets.es_left_jump.play()
+        GameAssets.es_right_jump.play()
+
+        frames = pyganim.getImagesFromSpriteSheet("../data/sprites/es_2.png", rows=1, cols=10, rects=[])
+        GameAssets.es_left_shock = pyganim.PygAnimation(list(zip(frames, [500, 100, 100, 100, 100, 100, 100, 100, 100, 100])))
+        GameAssets.es_right_shock = GameAssets.es_left_shock.getCopy()
+        GameAssets.es_right_shock.flip(True, False)
+        GameAssets.es_right_shock.makeTransformsPermanent()
+        GameAssets.es_left_shock.play()
+        GameAssets.es_right_shock.play()
+
+        frames = pyganim.getImagesFromSpriteSheet("../data/sprites/es_3.png", rows=1, cols=10, rects=[])
+        GameAssets.es_left_death = pyganim.PygAnimation(list(zip(frames, [120 for i in range(10)])))
+        GameAssets.es_right_death = GameAssets.es_left_death.getCopy()
+        GameAssets.es_right_death.flip(True, False)
+        GameAssets.es_right_death.makeTransformsPermanent()
+        GameAssets.es_left_death.play()
+        GameAssets.es_right_death.play()
 
         # Load Music
         GameAssets.beep = pg.mixer.Sound("../data/music/beep.wav")
