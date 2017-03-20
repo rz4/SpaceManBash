@@ -1,11 +1,14 @@
 {
 	"music" : "music_0.mp3",
-	"background" : "background_0",
-	"midground" : "midground_0",
+	"background" : "background_1",
+	"midground" : "midground_2",
 	"camera_pos": [0.0, 0.0, 0.0, 0.0],
   "camera_limits": [-3200.0, 0.0, 0.0, 1000.0],
 
 	"game_objects": [
+
+	["Floor", 0.0, 500.0, 6000.0, 100.0, 0.75, 0.1],
+	["Lava_Pit", 2510.0, 400.0, 1000.0, 100.0, 1.0, 0.4],
 
 	    ["Death_Pit", 0.0, 500.0, 5000.0, 100.0],
 	    ["Wall", 0.0, 215.0, 40.0, 50.0, 1.0, 0.18],
