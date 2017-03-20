@@ -72,6 +72,7 @@ class LevelFrame(GameFrame):
         self.game_data.update_collisions()
         for go in self.game_data.game_objects:
             go.update(delta, keys, self.game_data)
+            if self.level_loaded == False: return
 
     def render(self, screen):
         '''
@@ -102,6 +103,15 @@ class LevelFrame(GameFrame):
         for go in self.game_data.game_objects:
             go.render(screen, self.game_data)
 
+        # Render Game Information
+        health = ga.font_3.render("Health: ", False, (255, 255, 255))
+        if self.game_data.player_health > 60.0: color = (0, 255, 0)
+        elif self.game_data.player_health > 30.0: color = (255, 255, 0)
+        else: color = (255, 0, 0)
+        h = ga.font_3.render(str(int(self.game_data.player_health)), False, color)
+        screen.blit(health, (10, 10))
+        screen.blit(h, (120, 10))
+
 class PauseMenuFrame(GameFrame):
     """
     """
@@ -109,46 +119,62 @@ class PauseMenuFrame(GameFrame):
         '''
         '''
         super().__init__(game_data)
-        self.acc = 0
-        self.anim_cycle = 0
+        self.pointer = 0
+        self.menu_limit = 2
+
+        self.image_0 = ga.smb_left_idle.getCopy()
+        self.image_0.scale2x()
+        self.image_0.makeTransformsPermanent()
+        self.image_0.play()
+
+        self.image_1 = ga.es_right_idle.getCopy()
+        self.image_1.scale2x()
+        self.image_1.makeTransformsPermanent()
+        self.image_1.play()
 
     def update(self, delta, keys):
         '''
         '''
         if keys[0]:
-            self.game_data.switch_frame("LevelFrame")
-        if keys[10]:
-            self.game_data.load_level
-            self.game_data.switch_frame("MainMenuFrame")
+            if self.pointer == 0:
+                ga.swing.play()
+                self.game_data.switch_frame("LevelFrame")
+            if self.pointer == 1:
+                ga.swing.play()
+                pg.mixer.music.fadeout(2000)
+                Transitions.run("fadeOut", 1.5)
+                while(True):
+                    if Transitions.updateScreen() == False: break
+                    pg.display.flip()
+                self.game_data.switch_frame("MainMenuFrame")
+            self.pointer = 0
 
-        if self.acc < 1:
-            self.acc += delta
-        else:
-            self.acc = 0
-            if self.anim_cycle < 4:
-                self.anim_cycle += 1
-            else: self.anim_cycle = 0
+        if keys[12] and self.pointer > 0:
+            self.pointer -= 1
+            ga.beep.play()
+        if keys[13] and self.pointer < self.menu_limit-1:
+            self.pointer += 1
+            ga.beep.play()
 
     def render(self, screen):
         '''
         '''
         dim = self.game_data.screen_dim
 
-        space_img = pg.transform.scale(ga.background_0, (dim[0], dim[1]))
-        screen.blit(space_img,(0,0))
+        if self.pointer == 0: text_0 = ga.font_2.render("Continue", False,  (0, 255, 0))
+        else: text_0 = ga.font_2.render("Continue", False, (255, 255, 255))
+        if self.pointer == 1: text_1 = ga.font_2.render("Return To Main Menu", False,  (0, 255, 0))
+        else: text_1 = ga.font_2.render("Return To Main Menu", False, (255, 255, 255))
+        text_2 = ga.font_4.render("PAUSED", False, (255, 255, 255))
 
-        text_0 = ga.font_1.render("Pause Menu", False, (255, 255, 255))
-        screen.blit(text_0, (-text_0.get_width()/2 + dim[0]/2, -text_0.get_height()/2  + dim[1]/4))
+        self.image_0.blit(screen, (10, 200))
+        self.image_1.blit(screen, (520, 215))
 
-        text_0 = ga.font_1.render("To return to game", False, (0, 255, 255))
-        text_1 = ga.font_1.render("Press SPACE", False, (0, 255, 255))
-        screen.blit(text_0, (-text_0.get_width()/2 + dim[0]/4, -text_0.get_height()/2  + dim[1]*4/9))
-        screen.blit(text_1, (-text_1.get_width()/2 + dim[0]/4, -text_1.get_height()/2  + dim[1]*5/9))
+        screen.blit(text_0, (dim[0]/2.0 - (text_0.get_width()/2.0), 250))
+        screen.blit(text_1, (dim[0]/2.0 - (text_1.get_width()/2.0), 300))
+        screen.blit(text_2, (dim[0]/2.0 - (text_2.get_width()/2.0), 50))
 
-        text_0 = ga.font_1.render("For main menu", False, (0, 255, 255))
-        text_1 = ga.font_1.render("Press H", False, (0, 255, 255))
-        screen.blit(text_0, (-text_0.get_width()/2 + dim[0]*3/4, -text_0.get_height()/2  + dim[1]*4/9))
-        screen.blit(text_1, (-text_1.get_width()/2 + dim[0]*3/4, -text_1.get_height()/2  + dim[1]*5/9))
+
 
 class MainMenuFrame(GameFrame):
     """
@@ -172,7 +198,27 @@ class MainMenuFrame(GameFrame):
                 while(True):
                     if Transitions.updateScreen() == False: break
                     pg.display.flip()
+                self.game_data.level_index = 0
                 self.game_data.switch_frame("LevelFrame")
+                self.game_data.reset_level()
+            if self.pointer == 1:
+                ga.swing.play()
+                pg.mixer.music.fadeout(2000)
+                Transitions.run("fadeOut", 2.5)
+                while(True):
+                    if Transitions.updateScreen() == False: break
+                    pg.display.flip()
+                self.game_data.load_save("save_0.sav")
+                self.game_data.switch_frame("LevelFrame")
+                self.game_data.reset_level()
+            if self.pointer == 2:
+                ga.swing.play()
+                pg.mixer.music.fadeout(2000)
+                Transitions.run("fadeOut", 2.5)
+                while(True):
+                    if Transitions.updateScreen() == False: break
+                    pg.display.flip()
+                self.game_data.running = False
             self.pointer = 0
 
         if keys[12] and self.pointer > 0:
@@ -191,12 +237,12 @@ class MainMenuFrame(GameFrame):
         else: text_0 = ga.font_2.render("New Game", False, (255, 255, 255))
         if self.pointer == 1: text_1 = ga.font_2.render("Continue", False,  (0, 255, 0))
         else: text_1 = ga.font_2.render("Continue", False, (255, 255, 255))
-        if self.pointer == 2: text_2 = ga.font_2.render("Options", False,  (0, 255, 0))
-        else: text_2 = ga.font_2.render("Options", False, (255, 255, 255))
+        if self.pointer == 2: text_2 = ga.font_2.render("Quit", False,  (0, 255, 0))
+        else: text_2 = ga.font_2.render("Quit", False, (255, 255, 255))
         info = ga.font_0.render("SpaceManBash V.1.0 - Script Kitties 2017", False, (255, 255, 255))
 
-        screen.blit(text_0, (325, 350))
-        screen.blit(text_1, (325, 400))
-        screen.blit(text_2, (325, 450))
+        screen.blit(text_0, (dim[0]/2.0 - (text_0.get_width()/2.0), 350))
+        screen.blit(text_1, (dim[0]/2.0 - (text_1.get_width()/2.0), 400))
+        screen.blit(text_2, (dim[0]/2.0 - (text_2.get_width()/2.0), 450))
         screen.blit(info, (dim[0]-260, dim[1]-20))
         screen.blit(ga.title, (100, 50))

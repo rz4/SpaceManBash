@@ -18,12 +18,17 @@ class GameAssets:
         GameAssets.font_0 = pg.font.Font(None, 20)
         GameAssets.font_1 = pg.font.Font("../data/sprites/Gasalt-Black.ttf", 30)
         GameAssets.font_2 = pg.font.Font("../data/sprites/Gasalt-Regular.ttf", 40)
+        GameAssets.font_3 = pg.font.Font("../data/sprites/Gasalt-Black.ttf", 40)
+        GameAssets.font_4 = pg.font.Font("../data/sprites/Gasalt-Black.ttf", 100)
 
         # Load Static Images
         GameAssets.title = pg.image.load("../data/sprites/title.png").convert()
         GameAssets.title.set_colorkey((0, 0, 0))
 
         GameAssets.wall = pg.image.load('../data/sprites/metal_block.png').convert()
+        GameAssets.crate = pg.image.load('../data/sprites/c_0.png').convert()
+        GameAssets.teleporter = pg.image.load('../data/sprites/tp_1.png').convert()
+        GameAssets.teleporter.set_colorkey((0, 0, 0))
 
         GameAssets.background_0 = pg.image.load("../data/sprites/space2.png").convert()
         GameAssets.background_0 = pg.transform.scale(GameAssets.background_0, (dim[0]+900,  dim[1]+100))
@@ -99,7 +104,7 @@ class GameAssets:
         GameAssets.smb_right_hang.play()
 
         frames = pyganim.getImagesFromSpriteSheet("../data/sprites/smb_6.png", rows=1, cols=8, rects=[])
-        GameAssets.smb_left_death = pyganim.PygAnimation(list(zip(frames, [200, 100, 100, 100, 100, 100, 100, 1200])))
+        GameAssets.smb_left_death = pyganim.PygAnimation(list(zip(frames, [200, 100, 100, 100, 100, 100, 100, 1800])), loop=False)
         GameAssets.smb_right_death = GameAssets.smb_left_death.getCopy()
         GameAssets.smb_right_death.flip(True, False)
         GameAssets.smb_right_death.makeTransformsPermanent()
@@ -123,7 +128,7 @@ class GameAssets:
         GameAssets.es_right_jump.play()
 
         frames = pyganim.getImagesFromSpriteSheet("../data/sprites/es_2.png", rows=1, cols=10, rects=[])
-        GameAssets.es_left_shock = pyganim.PygAnimation(list(zip(frames, [500, 100, 100, 100, 100, 100, 100, 100, 100, 100])))
+        GameAssets.es_left_shock = pyganim.PygAnimation(list(zip(frames, [400, 100, 100, 100, 100, 100, 100, 100, 100, 100])), loop=False)
         GameAssets.es_right_shock = GameAssets.es_left_shock.getCopy()
         GameAssets.es_right_shock.flip(True, False)
         GameAssets.es_right_shock.makeTransformsPermanent()
@@ -131,7 +136,7 @@ class GameAssets:
         GameAssets.es_right_shock.play()
 
         frames = pyganim.getImagesFromSpriteSheet("../data/sprites/es_3.png", rows=1, cols=10, rects=[])
-        GameAssets.es_left_death = pyganim.PygAnimation(list(zip(frames, [120 for i in range(10)])))
+        GameAssets.es_left_death = pyganim.PygAnimation(list(zip(frames, [120 for i in range(10)])), loop=False)
         GameAssets.es_right_death = GameAssets.es_left_death.getCopy()
         GameAssets.es_right_death.flip(True, False)
         GameAssets.es_right_death.makeTransformsPermanent()

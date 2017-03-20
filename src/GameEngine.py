@@ -45,7 +45,6 @@ class GameEngine():
         Method runs game loop.
 
         '''
-        running = True
         self.clock = pg.time.Clock()
 
         # Intro Animation
@@ -101,14 +100,14 @@ class GameEngine():
             self.clock.tick(self.fps)
 
         #Game Loop
-        while running:
+        while self.game_data.running:
             # Key Events
             key_events = [0 for i in range(len(self.game_data.controls)+4)]
 
             # Key Pressed Events
             for event in pg.event.get():
                 if event.type == pg.QUIT:
-                    running = False
+                    self.game_data.running = False
                 if event.type == pg.KEYDOWN:
                     if event.key == self.game_data.controls['JUMP']:
                         key_events[0] = 1
@@ -176,4 +175,4 @@ class GameEngine():
 
         '''
         self.screen.fill((0,0,0))
-        self.game_data.frame_current.render(self.screen)
+        if self.game_data.running: self.game_data.frame_current.render(self.screen)

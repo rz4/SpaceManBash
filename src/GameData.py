@@ -23,6 +23,7 @@ class GameData():
         self.debug = False
         self.game_name = "SpaceManBash"
         self.delta_sum = 0
+        self.running = True
 
         # GameFrome Data
         self.frames = []
@@ -51,7 +52,7 @@ class GameData():
 
         # Level Data
         self.levels = []
-        self.level_index = 10
+        self.level_index = 0
         self.level_background = None
         self.level_midground = None
         self.camera_pos = np.array([0.0, 0.0, 0.0, 0.0])
@@ -60,6 +61,8 @@ class GameData():
         self.collisions = {}
 
         # Player Data
+        self.player_pos = np.array([0.0, 0.0])
+        self.player_health = 100
 
     def switch_frame(self, frame):
         '''
@@ -93,7 +96,6 @@ class GameData():
                 data = {}
                 data['controls'] = self.controls
                 data['screen_dim'] = self.screen_dim
-                data['save_filenames'] = self.saves
                 json_dump = json.dumps(data)
                 f.write(json_dump)
         except Exception as e:
@@ -114,7 +116,6 @@ class GameData():
                     data = json.loads(json_dump)
                     self.controls = data['controls']
                     self.screen_dim = data['screen_dim']
-                    self.saves = data['save_filenames']
         except Exception as e:
             print("Could Load Config:", filename)
             print(e)
@@ -128,7 +129,7 @@ class GameData():
 
         '''
         try:
-            with open("../data/saves/" + self.saves[self.save_index], "w") as f:
+            with open("../data/saves/" + filename, "w") as f:
                 data = {}
                 data["level_index"] = self.level_index
                 json_dump = json.dumps(data)
@@ -137,7 +138,7 @@ class GameData():
             print("Could Save Save Data:", filename)
             print(e)
 
-    def load_save(self):
+    def load_save(self, filename):
         '''
         Method loads game data state from save file.
 
@@ -145,7 +146,7 @@ class GameData():
             filename    ;str    save filename
         '''
         try:
-            with open("../data/saves/" + self.saves[self.save_index], "r") as f:
+            with open("../data/saves/" + filename, "r") as f:
                 for json_dump in f:
                     data = json.loads(json_dump)
                     self.level_index = data["level_index"]
@@ -195,6 +196,8 @@ class GameData():
 
         '''
         self.frame_current.level_loaded = False
+        self.game_objects = []
+        self.collisions = {}
         self.load_level()
 
     def switch_level(self, index):
@@ -207,6 +210,9 @@ class GameData():
         '''
         self.level_index = index
         self.frame_current.level_loaded = False
+        self.game_objects = []
+        self.collisions = {}
+        self.save_save("save_0.sav")
         self.load_level()
 
     def add_game_object(self, game_object):
@@ -218,6 +224,16 @@ class GameData():
 
         '''
         self.game_objects.append(game_object)
+
+    def remove_game_object(self, game_object):
+        '''
+        Method adds game object.
+
+        Param:
+            game_object ;GameObject
+
+        '''
+        self.game_objects.remove(game_object)
 
     def update_collisions(self):
         '''
