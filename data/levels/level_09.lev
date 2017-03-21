@@ -1,9 +1,9 @@
 {
-  "music" : "music_0.mp3",
-  "background" : "background_0",
+  "music" : "match.mp3",
+  "background" : "background_1",
   "midground" : "midground_9",
 	"camera_pos": [0.0, 0.0, 0.0, 0.0],
-  "camera_limits": [-12000.0, -0.0, 0.0, 1000.0],
+  "camera_limits": [-11100.0, -0.0, 0.0, 1000.0],
   "scripts":[],
 
 	"game_objects": [
@@ -46,9 +46,10 @@
 	    ["Wall", 11450.0, 355.0, 150.0, 100.0, 1.0, 0.18],
 	    ["Wall", 11800.0, 250.0, 150.0, 250.0, 1.0, 0.18],
 
-	    ["GravityField", 0.0, 0.0, 11950.0, 600.0, 0.0, 6.0],
+	    ["GravityField", 0.0, 0.0, 11950.0, 600.0, 0.0, 140],
 
-	    ["Player", 20, 20.0]
+	    ["Player", 20, 20.0],
+      ["Teleporter", 11800.0, 220.0, 10]
 
 	]
 

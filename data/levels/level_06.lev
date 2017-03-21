@@ -2,7 +2,7 @@
   "music" : "star_power.mp3",
   "background" : "background_1",
   "midground" : "midground_6",
-  "camera_pos": [0.0, 0.0, 0.0, 0.0],
+	"camera_pos": [0.0, 0.0, 0.0, 0.0],
   "camera_limits": [-6000.0, 0.0, 0.0, 1000.0],
   "scripts":[],
 

@@ -1,10 +1,9 @@
 {
-	"music" : "music_0.mp3",
+	"music" : "the_moon.mp3",
 	"background" : "background_0",
 	"midground" : "midground_0",
 	"camera_pos": [0.0, 0.0, 0.0, 0.0],
   "camera_limits": [-7700.0, 0.0, 0.0, 1000.0],
-
 	"scripts" : [],
 
 	"game_objects": [
