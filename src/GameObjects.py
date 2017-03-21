@@ -201,7 +201,6 @@ class Background_Dragon(GameObject):
             ga.dragon_fly_right
             ]
         self.anim_index = 0
-        self.anim_speed = 1
         self.vel_scalar = np.random.randint(1500)/1500+.5
 
     def update(self, delta, keys, game_data):
@@ -218,12 +217,7 @@ class Background_Dragon(GameObject):
             self.set_pos(game_data.player_pos[0]+screen_dim[0],np.random.randint(screen_dim[0])+100)
         else:
             self.vel[0] = self.vel_scalar*(-20)
-
-
         super().update(delta, keys, game_data)
-
-        self.anim_speed = 13
-
 
         if self.vel[0] > 10.0:
             self.anim_index = 1
@@ -235,7 +229,6 @@ class Background_Dragon(GameObject):
         '''
         '''
         draw_rect = self.rect.astype(int) + game_data.camera_pos.astype(int)
-        anim = ga.animate(self.animations[self.anim_index], self.anim_speed, game_data.delta_sum)
         w = anim.get_width()
         h = anim.get_height()
         x_prime = draw_rect[0] + (draw_rect[2]/2.0) - (w/2.0)
@@ -505,6 +498,7 @@ class Bash(HitBox):
                             go.vel[1] = 500
                     if go.__class__.__name__ == 'Button':
                         if go.pressed == False:
+                            ga.beep.play()
                             go.pressed = True
                             game_data.add_level_script(go.script)
             self.frame += 1
@@ -799,6 +793,7 @@ class Electric_Sheep(GameObject):
         on_ground = self.on_ground(game_data)
         action = np.random.randint(1000)
         player_pos = game_data.player_pos
+        if self.on_screen(game_data) and action%200 == 5: ga.sheep_bah1.play()
         if abs(player_pos[0] - self.rect[0]) < game_data.screen_dim[0]*self.agressiveness:
             if player_pos[0] - self.rect[0] < 0: action = 1
             else: action = 2
@@ -835,6 +830,7 @@ class Electric_Sheep(GameObject):
                 if self.vel[0] < limit: self.vel[0] += 15
         if abs(player_pos[0]- self.rect[0]) < 200: action = 3
         if action%200 == 3 and not self.attack_1:
+            if self.on_screen(game_data): ga.shock_sound.play()
             self.attack_1 = True
             self.attack_anim_1.stop()
             self.attack_anim_0.stop()
@@ -895,10 +891,12 @@ class Electric_Sheep(GameObject):
         if not self.on_screen(game_data): return
         draw_rect = self.rect.astype(int) + game_data.camera_pos.astype(int)
         if self.anim_index == 0:
+            if np.random.randint(1000) == 6: ga.sheep_bah1.play()
             x_prime = draw_rect[0] - 18
             y_prime = draw_rect[1] - 26
             ga.es_left_idle.blit(screen, (x_prime, y_prime))
         if self.anim_index == 1:
+            if np.random.randint(1000) == 6: ga.sheep_bah2.play()
             x_prime = draw_rect[0] - 12
             y_prime = draw_rect[1] - 26
             ga.es_right_idle.blit(screen, (x_prime, y_prime))

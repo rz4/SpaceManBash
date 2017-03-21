@@ -5,7 +5,7 @@ Last Updated: 12/17/17
 '''
 
 import pygame as pg
-from GameAssets import *
+from GameAssets import GameAssets as ga
 from GameData import GameData
 import Transitions
 
@@ -38,7 +38,7 @@ class GameEngine():
         Transitions.init(self.screen, self.game_data.screen_dim[0], self.game_data.screen_dim[1], [0,0,0])
 
         #Initiate Game Assets
-        GameAssets.init(self.game_data.screen_dim)
+        ga.init(self.game_data.screen_dim)
 
     def run(self):
         '''
@@ -60,6 +60,7 @@ class GameEngine():
                 self.clock.tick(self.fps)
                 pg.display.flip()
 
+            ga.yee.play()
             pg.time.wait(2000)
 
             Transitions.run("fadeOut", 1.5)
@@ -71,11 +72,11 @@ class GameEngine():
             pg.time.wait(1000)
 
             self.screen.fill((0,0,0))
-            text = GameAssets.font_1.render("Script Kitties Entertainment Presents", False, (255, 255, 255))
+            text = ga.font_1.render("Script Kitties Entertainment Presents", False, (255, 255, 255))
             self.screen.blit(text, (200, 250))
 
             pg.mixer.music.load("../data/music/test.mp3")
-            pg.mixer.music.set_volume(0.25)
+            pg.mixer.music.set_volume(0.15)
             pg.mixer.music.play()
 
             Transitions.run("fadeIn", 1.5)
@@ -151,7 +152,7 @@ class GameEngine():
 
             # Debugging Information
             if self.game_data.debug:
-                fps_text = GameAssets.font_0.render(str(int(self.clock.get_fps())), False, (255, 255, 255))
+                fps_text = ga.font_0.render(str(int(self.clock.get_fps())), False, (255, 255, 255))
                 self.screen.blit(fps_text, (780, 2))
 
             pg.display.flip()

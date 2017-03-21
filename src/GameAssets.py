@@ -194,48 +194,15 @@ class GameAssets:
         GameAssets.swing = pg.mixer.Sound("../data/music/swing.wav")
         GameAssets.jump = pg.mixer.Sound("../data/music/jump.wav")
         GameAssets.die = pg.mixer.Sound("../data/music/Sad_Trombone.wav")
-        GameAssets.swing.set_volume(1.0)
+        GameAssets.shock_sound = pg.mixer.Sound("../data/music/shock.wav")
+        GameAssets.sheep_bah1 = pg.mixer.Sound("../data/music/sheep_bah2.wav")
+        GameAssets.sheep_bah2 = pg.mixer.Sound("../data/music/sheep_bah1.wav")
+        GameAssets.yee = pg.mixer.Sound("../data/music/yee.wav")
+        GameAssets.beep.set_volume(0.5)
+        GameAssets.swing.set_volume(0.9)
         GameAssets.jump.set_volume(0.1)
-
-    @staticmethod
-    def animate(animation, speed, delta_sum):
-        frame = int((int(delta_sum) / int(speed) ) % len(animation))
-        return animation[frame]
-
-class SpriteSheet():
-    """ Class used to grab images out of a sprite sheet. """
-
-    def __init__(self, file_name):
-        """ Constructor. Pass in the file name of the sprite sheet. """
-
-        # Load the sprite sheet.
-        self.sprite_sheet = pg.image.load(file_name).convert()
-
-
-    def get_image(self, x, y, width, height):
-        """ Grab a single image out of a larger spritesheet
-            Pass in the x, y location of the sprite
-            and the width and height of the sprite. """
-
-        # Create a new blank image
-        image = pg.Surface([width, height]).convert()
-
-        # Copy the sprite from the large sheet onto the smaller image
-        image.blit(self.sprite_sheet, (0, 0), (x, y, width, height))
-
-        # Assuming black works as the transparent color
-        image.set_colorkey((0, 0, 0))
-
-        # Return the image
-        return image
-
-    def get_animation(self, x, y, width, height, frames, scale_x, scale_y, flip=False):
-        animation = []
-
-        for i in range(frames):
-            image = self.get_image(x + (i * width), y, width, height)
-            image = pg.transform.scale(image, (scale_x, scale_y))
-            image = pg.transform.flip(image, flip, False)
-            animation.append(image)
-
-        return animation
+        GameAssets.die.set_volume(0.5)
+        GameAssets.yee.set_volume(0.04)
+        GameAssets.sheep_bah1.set_volume(0.1)
+        GameAssets.sheep_bah2.set_volume(0.1)
+        GameAssets.shock_sound.set_volume(0.6)

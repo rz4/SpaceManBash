@@ -106,13 +106,12 @@ class LevelFrame(GameFrame):
         cam_pos = self.game_data.camera_pos.astype(int)
 
         # Render Backgrounds
-        screen.blit(self.game_data.level_background, (cam_pos[0]/5,cam_pos[1]/5-100))
-        screen.blit(self.game_data.level_midground, (cam_pos[0]/3,cam_pos[1]/3-200))
+        screen.blit(self.game_data.level_background, (cam_pos[0]/5, cam_pos[1]/5-100))
+        screen.blit(self.game_data.level_midground, (cam_pos[0]/3, cam_pos[1]/3-200))
 
         # Render game objects
         for go in self.game_data.game_objects:
             go.render(screen, self.game_data)
-
 
         # Render script Stuff
         for script in self.game_data.level_scripts:
