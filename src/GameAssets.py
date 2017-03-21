@@ -35,15 +35,16 @@ class GameAssets:
         GameAssets.button.set_colorkey((0, 0, 0))
         GameAssets.button_pressed = pg.image.load('../data/sprites/b_2.png').convert()
         GameAssets.button_pressed.set_colorkey((0, 0, 0))
+        GameAssets.floor = pg.image.load('../data/sprites/new_floor.png').convert()
 
         GameAssets.background_0 = pg.image.load("../data/sprites/background_images/space2.png").convert()
-        GameAssets.background_0 = pg.transform.scale(GameAssets.background_0, (dim[0]+900,  dim[1]+100))
+        GameAssets.background_0 = pg.transform.scale(GameAssets.background_0, (dim[0]+1800,  dim[1]+400))
 
         GameAssets.background_1 = pg.image.load("../data/sprites/background_images/space.png").convert()
         GameAssets.background_1 = pg.transform.scale(GameAssets.background_1, (dim[0]+1000,  dim[1]+180))
 
         GameAssets.midground_0 = pg.image.load("../data/sprites/background_images/station.png").convert()
-        GameAssets.midground_0 = pg.transform.scale(GameAssets.midground_0, (dim[0]+2000,  dim[1]+500))
+        GameAssets.midground_0 = pg.transform.scale(GameAssets.midground_0, (dim[0]+2500,  dim[1]+500))
         GameAssets.midground_0.set_colorkey((0, 0, 0))
 
         GameAssets.midground_1 = pg.image.load("../data/sprites/background_images/earth.png").convert()
@@ -51,7 +52,7 @@ class GameAssets:
         GameAssets.midground_1.set_colorkey((0, 0, 0))
 
         GameAssets.midground_2 = pg.image.load("../data/sprites/background_images/on_moon.png").convert()
-        GameAssets.midground_2 = pg.transform.scale(GameAssets.midground_2, (dim[0]+2000,  dim[1]+800))
+        GameAssets.midground_2 = pg.transform.scale(GameAssets.midground_2, (dim[0]+1500,  dim[1]+800))
         GameAssets.midground_2.set_colorkey((0, 0, 0))
 
         GameAssets.midground_3 = pg.image.load("../data/sprites/background_images/see_inside_ship.png").convert()
