@@ -196,6 +196,7 @@ class GameAssets:
         GameAssets.beep = pg.mixer.Sound("../data/music/beep.wav")
         GameAssets.swing = pg.mixer.Sound("../data/music/swing.wav")
         GameAssets.jump = pg.mixer.Sound("../data/music/jump.wav")
+        GameAssets.die = pg.mixer.Sound("../data/music/Sad_Trombone.wav")
         GameAssets.swing.set_volume(1.0)
         GameAssets.jump.set_volume(0.1)
 
