@@ -224,17 +224,14 @@ class Background_Dragon(GameObject):
         if self.vel[0] < -10.0 :
             self.anim_index = 0
 
-
     def render(self, screen, game_data):
         '''
         '''
         draw_rect = self.rect.astype(int) + game_data.camera_pos.astype(int)
-        w = anim.get_width()
-        h = anim.get_height()
-        x_prime = draw_rect[0] + (draw_rect[2]/2.0) - (w/2.0)
-        y_prime = draw_rect[1] + (draw_rect[3]/2.0) - (h/2.0)
-        anim = pg.transform.scale(anim, (60, 50))
-        screen.blit(anim, (x_prime, y_prime))
+        x_prime = draw_rect[0] -10
+        y_prime = draw_rect[1] -10
+        anim = self.animations[self.anim_index]
+        anim.blit(screen, (x_prime, y_prime))
         #super().render(screen, game_data)
 
 class Wall(GameObject):
@@ -382,7 +379,7 @@ class Floor(GameObject):
             screen.blit(floor, (draw_rect[0], draw_rect[1]))
         super().render(screen, game_data)
 
-        
+
 class Death_Pit(GameObject):
     """
     """

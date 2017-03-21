@@ -5,6 +5,7 @@
   "midground" : "midground_3",
 	"camera_pos": [0.0, 0.0, 0.0, 0.0],
   "camera_limits": [-6000.0, 0, 0, 1000.0],
+  "scripts":[],
 
 	"game_objects": [
 
@@ -44,4 +45,4 @@
 
   	]
 
-  } 
+  }

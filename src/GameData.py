@@ -20,7 +20,7 @@ class GameData():
         Method initiates game state variables.
 
         '''
-        self.debug = False
+        self.debug = True
         self.game_name = "SpaceManBash"
         self.delta_sum = 0
         self.running = True
