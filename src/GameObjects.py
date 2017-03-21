@@ -603,6 +603,7 @@ class Player(GameObject):
                 game_data.remove_game_object(self.hitbox)
                 self.hitbox = None
             if ga.smb_left_death.isFinished() or ga.smb_right_death.isFinished():
+                pg.mixer.music.fadeout(1000)
                 Transitions.run("fadeOut", 1.0)
                 while(True):
                     if Transitions.updateScreen() == False: break
@@ -1074,7 +1075,7 @@ class Health_Pad(GameObject):
         if not self.on_screen(game_data): return
         draw_rect = self.rect.astype(int) + game_data.camera_pos.astype(int)
         screen.blit(ga.helthpack, (draw_rect[0], draw_rect[1]-20))
-        
+
 class Button(GameObject):
     """
     """
