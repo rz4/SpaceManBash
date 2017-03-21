@@ -1,8 +1,7 @@
 # SpaceManBash
 
-![Current Version](https://img.shields.io/badge/version-0.0-red.svg)
+![Current Version](https://img.shields.io/badge/version-1.0-green.svg)
 
-![logo](doc/logo.png =50x50)
 
 Project Team: **Script Kitties**
 
@@ -12,16 +11,17 @@ Karina Stestyuk - Character designer
 
 [Rafael Zamora](https://github.com/rz4) - Game engine designer
 
-Last Updated: **February 17, 2016**
+Last Updated: **March 21, 2016**
 
 ## Overview
 
 Our project's goal is to create a game using Pygame for our CS498G Embedded Systems
 course in order to learn more about the Python language.
 
-**TODO** add description of game and screenshots
+SpaceManBash is a 2d platformer with some combat elements. 
 
-## Gameplay Screenshots
+An executeable of the game is provided which has all the require python packages
+precompiled.
 
 ## Getting Started
 
@@ -29,16 +29,8 @@ course in order to learn more about the Python language.
 
 Requires Python 3.
 
-Requires the following Python Packages:
-
--[Pygame](https://pygame.org)
-
 #### Setup and Installation:
 
-Download or clone repository and install required packages.
+Download or clone repository.
 
-To run game change directory to /src/ and run :
-
-```
-$python3 SpaceManBash.py
-```
+To play game change directory to `/SpaceManBash/exe/` and run the `SpaceManBash` executable.
