@@ -6,6 +6,7 @@ Last Updated: 3/17/17
 
 import pygame as pg
 from GameAssets import GameAssets as ga
+from GameScripts import GameScripts as gs
 import GameObjects
 import Transitions
 
@@ -74,6 +75,15 @@ class LevelFrame(GameFrame):
             go.update(delta, keys, self.game_data)
             if self.level_loaded == False: return
 
+        # Update script Stuff
+        for script in self.game_data.level_scripts:
+            script_ = getattr(gs, script)
+            args = {}
+            args['delta'] = delta
+            args['keys'] = keys
+            args['game_data'] = self.game_data
+            script_(update_args=args)
+
     def render(self, screen):
         '''
         '''
@@ -102,6 +112,15 @@ class LevelFrame(GameFrame):
         # Render game objects
         for go in self.game_data.game_objects:
             go.render(screen, self.game_data)
+
+
+        # Render script Stuff
+        for script in self.game_data.level_scripts:
+            script_ = getattr(gs, script)
+            args = {}
+            args['screen'] = screen
+            args['game_data'] = self.game_data
+            script_(render_args=args)
 
         # Render Game Information
         health = ga.font_3.render("Health: ", False, (255, 255, 255))

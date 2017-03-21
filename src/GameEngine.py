@@ -71,7 +71,7 @@ class GameEngine():
             pg.time.wait(1000)
 
             self.screen.fill((0,0,0))
-            text = GameAssets.font_1.render("Script Kitties Entertainment Presents:", False, (255, 255, 255))
+            text = GameAssets.font_1.render("Script Kitties Entertainment Presents", False, (255, 255, 255))
             self.screen.blit(text, (200, 250))
 
             pg.mixer.music.load("../data/music/test.mp3")

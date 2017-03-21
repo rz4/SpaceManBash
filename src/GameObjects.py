@@ -67,10 +67,11 @@ class GameObject():
         if (self.rect[0]+self.rect[2]<rect[0] or rect[0]+rect[2]<self.rect[0] or self.rect[1]+self.rect[3]<rect[1] or rect[1]+rect[3]<self.rect[1]): return False
         else: return True
 
-    def on_screen(self, game_data):
+    def on_screen(self, game_data, rect=None):
         '''
         '''
         draw_rect = self.rect.astype(int) + game_data.camera_pos.astype(int)
+        if rect is not None: draw_rect = rect
         dim = game_data.screen_dim
         return (draw_rect[0] + draw_rect[2] > 0 and draw_rect[0] < dim[0] and draw_rect[1] + draw_rect[3] > 0 and draw_rect[1] < dim[1])
 
@@ -186,7 +187,63 @@ class Enemy_Dragon(GameObject):
                     return flag
         return flag
 
+class Background_Dragon(GameObject):
+    """
+    """
 
+    def __init__(self, args):
+        '''
+        '''
+        super().__init__([args[0], args[1], 3.0, 5.0])
+        self.debug_color = (0, 255, 0)
+        self.animations =[
+            ga.dragon_fly_left,
+            ga.dragon_fly_right
+            ]
+        self.anim_index = 0
+        self.anim_speed = 1
+        Player.position = [0,0]
+        self.vel_scalar = np.random.randint(1500)/1500+.5
+
+    def update(self, delta, keys, game_data):
+        '''
+        '''
+        limit = 150
+        screen_dim = game_data.screen_dim
+        cam_pos = game_data.camera_pos
+
+        self.set_dim(3.0, 5.0)
+        if self.get_pos()[0] < (0):
+            self.set_pos(game_data.player_pos[0]+screen_dim[0],np.random.randint(screen_dim[0])+100)
+        elif self.get_pos()[0] < (game_data.player_pos[0]-screen_dim[0]):
+            self.set_pos(game_data.player_pos[0]+screen_dim[0],np.random.randint(screen_dim[0])+100)
+        else:
+            self.vel[0] = self.vel_scalar*(-20)
+
+
+        super().update(delta, keys, game_data)
+
+        self.anim_speed = 13
+
+
+        if self.vel[0] > 10.0:
+            self.anim_index = 1
+        if self.vel[0] < -10.0 :
+            self.anim_index = 0
+
+
+    def render(self, screen, game_data):
+        '''
+        '''
+        draw_rect = self.rect.astype(int) + game_data.camera_pos.astype(int)
+        anim = ga.animate(self.animations[self.anim_index], self.anim_speed, game_data.delta_sum)
+        w = anim.get_width()
+        h = anim.get_height()
+        x_prime = draw_rect[0] + (draw_rect[2]/2.0) - (w/2.0)
+        y_prime = draw_rect[1] + (draw_rect[3]/2.0) - (h/2.0)
+        anim = pg.transform.scale(anim, (60, 50))
+        screen.blit(anim, (x_prime, y_prime))
+        #super().render(screen, game_data)
 
 class Wall(GameObject):
     """
@@ -199,6 +256,15 @@ class Wall(GameObject):
         self.solid = False
         self.bounce = args[4]
         self.friction = args[5]
+
+        if ((self.rect[2] > 160) or (self.rect[3] > 160)):
+            repeat_x = int(self.rect[2]/100)
+            repeat_y = int(self.rect[3]/100)
+            width = 100
+            length = 100
+            self.wall = pg.transform.scale(ga.wall, (width,  length))
+        else:
+            self.wall = pg.transform.scale(ga.wall, (int(self.rect[2]), int(self.rect[3])))
 
     def update(self, delta, keys, game_data):
         '''
@@ -240,22 +306,18 @@ class Wall(GameObject):
         '''
         if not self.on_screen(game_data): return
         draw_rect = self.rect.astype(int) + game_data.camera_pos.astype(int)
-        width = draw_rect[2]
-        length = draw_rect[3]
         dim = game_data.screen_dim
+
         if ((draw_rect[2] > 160) or (draw_rect[3] > 160)):
-            repeat_x = int(width/100)
-            repeat_y = int(length/100)
-            width = int(width/repeat_x)
-            length = int(length/repeat_y)
-            wall = pg.transform.scale(ga.wall, (width,  length))
-            for i in range(0,repeat_x):
-                for j in range(0,repeat_y):
-                    if ((width*i)+draw_rect[0] + draw_rect[2] > 0 and (width*i)+draw_rect[0] < dim[0] and (length*j)+draw_rect[1] + draw_rect[3] > 0 and (length*j)+draw_rect[1] < dim[1]):
-                        screen.blit(wall, ((width*i)+draw_rect[0], (length*j)+draw_rect[1]))
-        else:
-            wall = pg.transform.scale(ga.wall, (draw_rect[2],  draw_rect[3]))
-            screen.blit(wall, (draw_rect[0], draw_rect[1]))
+            for i in range(0,int(self.rect[2]/100)):
+                for j in range(0,int(self.rect[3]/100)):
+                    rect = draw_rect.copy()
+                    rect[0] += (self.wall.get_width()*i)
+                    rect[1] += (self.wall.get_height()*j)
+                    rect[2] = self.wall.get_width()
+                    rect[3] = self.wall.get_height()
+                    if self.on_screen(game_data, rect): screen.blit(self.wall, (rect[0], rect[1]))
+        else: screen.blit(self.wall, (draw_rect[0], draw_rect[1]))
         super().render(screen, game_data)
 
 class Floor(Wall):
@@ -329,7 +391,7 @@ class Lava_Pit(Wall):
         super().update(delta, keys, game_data)
         for go in game_data.collisions[self]:
             if go.__class__.__name__ == 'Player':
-                go.health -= 0.1
+                if go.health > 0: go.health -= 1.0
 
     def render(self, screen, game_data):
         '''
@@ -342,14 +404,18 @@ class Lava_Pit(Wall):
         length = draw_rect[3]
         dim = game_data.screen_dim
         if ((draw_rect[2] > 128) or (draw_rect[3] > 128)):
-            repeat_x = int(width/127)
+            repeat_x = int(width/100)
             repeat_y = int(length/100)
             width = (width/repeat_x) - 2
             length = length/repeat_y
-            for i in range(int(camera_pos[0]/100),repeat_x+1):
-                for j in range(int(camera_pos[1]/100),repeat_y):
-                    if ((width*i)+draw_rect[0] + draw_rect[2] > 0 and (width*i)+draw_rect[0] < dim[0] and (length*j)+draw_rect[1] + draw_rect[3] > 0 and (length*j)+draw_rect[1] < dim[1]):
-                        ga.lava.blit(screen, ((width*i)+draw_rect[0], (length*j)+draw_rect[1]))
+            for i in range(0,repeat_x+1):
+                for j in range(0,repeat_y):
+                    rect = draw_rect.copy()
+                    rect[0] += (width*i)
+                    rect[1] += (length*j)
+                    rect[2] = width
+                    rect[3] = length
+                    if self.on_screen(game_data, rect): ga.lava.blit(screen, (rect[0], rect[1]))
         #super().render(screen, game_data)
 
 class HitBox(GameObject):
@@ -394,14 +460,14 @@ class Swing(HitBox):
                         if self.direction == 0:
                             if go.__class__.__name__ == 'Electric_Sheep' and self.frame == 5: go.health -= 40
                             go.vel[0] = 50
-                            if go.__class__.__name__ == 'Crate': go.vel[0] = 100
+                            if go.__class__.__name__ == 'Crate': go.vel[0] = 150
                             go.rect[0] += 10
                             go.rect[1] -= 10
                             go.vel[1] = -100
                         elif self.direction == 1:
                             if go.__class__.__name__ == 'Electric_Sheep' and self.frame == 5: go.health -= 40
                             go.vel[0] = -50
-                            if go.__class__.__name__ == 'Crate': go.vel[0] = -100
+                            if go.__class__.__name__ == 'Crate': go.vel[0] = -150
                             go.rect[0] -= 10
                             go.rect[1] -= 10
                             go.vel[1] = -100
@@ -431,13 +497,17 @@ class Bash(HitBox):
                             if go.__class__.__name__ == 'Electric_Sheep':
                                 go.vel[0] = 100
                                 go.health -= 25
-                            go.vel[1] = 1000
+                            go.vel[1] = 500
                         elif self.direction == 1:
                             go.rect[1] -= 10
                             if go.__class__.__name__ == 'Electric_Sheep':
                                 go.vel[0] = -100
                                 go.health -= 25
-                            go.vel[1] = 1000
+                            go.vel[1] = 500
+                    if go.__class__.__name__ == 'Button':
+                        if go.pressed == False:
+                            go.pressed = True
+                            game_data.add_level_script(go.script)
             self.frame += 1
         except Exception as e:
             pass
@@ -463,6 +533,7 @@ class Shock(HitBox):
                             if go.__class__.__name__ == 'Player':
                                 if not go.alive: continue
                                 go.health -= 5
+                                go.shocked = True
                             go.vel[0] = 100
                             go.rect[0] += 10
                             go.rect[1] -= 10
@@ -471,6 +542,7 @@ class Shock(HitBox):
                             if go.__class__.__name__ == 'Player':
                                 if not go.alive: continue
                                 go.health -= 5
+                                go.shocked = True
                             go.vel[0] = -100
                             go.rect[0] -= 10
                             go.rect[1] -= 10
@@ -490,7 +562,7 @@ class Player(GameObject):
         self.solid = True
         self.physics = True
         self.debug_color = (0, 255, 0)
-        self.anim_index = 0
+        self.anim_index = 1
         self.attack_1 = False
         self.attack_2 = False
         self.hitbox = None
@@ -498,13 +570,23 @@ class Player(GameObject):
         self.health = 100.0
         self.alive = True
 
+        self.shocked = False
+        self.shocked_time = 0.0
+
     def update(self, delta, keys, game_data):
         '''
         '''
         # Player Game Logic
         limit = 150
         speed = 10
-        on_ground = self.on_ground(game_data, obj=['Crate','Teleporter'])
+        on_ground = self.on_ground(game_data, obj=['Crate','Teleporter', 'Button'])
+
+        if self.shocked:
+            speed -= 5
+            self.shocked_time += delta
+            if self.shocked_time > 4.0:
+                self.shocked = False
+                self.shocked_time = 0.0
 
         game_data.player_health = self.health
         if self.alive and self.health <= 0:
@@ -531,7 +613,7 @@ class Player(GameObject):
                 super().update(delta, keys, game_data)
                 game_data.center_camera_on_game_object(self)
                 return
-        if keys[9] and on_ground: speed = 12
+        if keys[9] and on_ground: speed += 2
         if keys[0] and on_ground:
             ga.jump.play()
             ga.smb_left_jump.stop()
@@ -578,7 +660,7 @@ class Player(GameObject):
                 self.hitbox = None
 
         # Animation Logic
-        if self.last_delta[0] > 0:
+        if self.last_delta[0] >= 0:
             self.anim_index = 0
             if abs(self.vel[0]) > 10: self.anim_index = 2
             if not on_ground: self.anim_index = 4
@@ -744,9 +826,12 @@ class Electric_Sheep(GameObject):
             ga.es_left_jump.play()
             ga.es_right_jump.play()
             self.vel[1] = -150
+        left = False
         if not self.attack_1:
-            if action%100 == 1 and self.vel[0] > -limit: self.vel[0] -= 10
-            if action%100 == 2 and self.vel[0] < limit: self.vel[0] += 10
+            if action%100 == 1 and self.vel[0] > -limit: self.vel[0] -= 15
+            if action%100 == 2:
+                left = True
+                if self.vel[0] < limit: self.vel[0] += 15
         if abs(player_pos[0]- self.rect[0]) < 200: action = 3
         if action%200 == 3 and not self.attack_1:
             self.attack_1 = True
@@ -757,7 +842,6 @@ class Electric_Sheep(GameObject):
 
         super().update(delta, keys, game_data)
 
-
         if self.attack_anim_1.isFinished() or self.attack_anim_0.isFinished():
             self.attack_1 = False
             if self.hitbox and self.hitbox.__class__.__name__ == 'Shock':
@@ -766,7 +850,16 @@ class Electric_Sheep(GameObject):
 
         # Animation Logic
 
-        if self.last_delta[0] > 0:
+        if self.hitbox:
+            if self.hitbox.direction == 0:
+                self.hitbox.rect[0] = self.rect[0]+110
+                self.hitbox.rect[1] = self.rect[1]+15
+            else:
+                self.hitbox.rect[0] = self.rect[0]-120
+                self.hitbox.rect[1] = self.rect[1]+15
+            return
+
+        if left:
             self.anim_index = 0
             if abs(self.vel[0]) > 10: self.anim_index = 4
             if not on_ground: self.anim_index = 4
@@ -930,4 +1023,100 @@ class Teleporter(GameObject):
         if not self.on_screen(game_data): return
         draw_rect = self.rect.astype(int) + game_data.camera_pos.astype(int)
         screen.blit(ga.teleporter, (draw_rect[0], draw_rect[1]-20))
+        super().render(screen, game_data)
+
+class Health_Pad(GameObject):
+    """
+    """
+
+    def __init__(self, args):
+        '''
+        '''
+        super().__init__([args[0], args[1], 100, 30])
+
+    def update(self, delta, keys, game_data):
+        '''
+        '''
+        for go in game_data.collisions[self]:
+            if go.__class__.__name__ == 'Player':
+                tolerance = 0.0
+                for go in game_data.collisions[self]:
+                    if go.__class__.__name__ == 'Player':
+                        if go.rect[0] >= self.rect[0]:
+                            delta_x = self.rect[0] + self.rect[2] + tolerance - go.rect[0]
+                        elif go.rect[0] < self.rect[0]:
+                            delta_x = -(go.rect[0] + go.rect[2] + tolerance - self.rect[0])
+                        if go.rect[1] >= self.rect[1]:
+                            delta_y = self.rect[1] + self.rect[3] + tolerance - go.rect[1]
+                        elif go.rect[1] < self.rect[1]:
+                            delta_y = -(go.rect[1] + go.rect[3] + tolerance - self.rect[1])
+                        if abs(delta_x) < abs(delta_y):
+                            go.set_pos(go.rect[0] + delta_x, go.rect[1])
+                            go.vel[0] = 0
+                        else:
+                            go.set_pos(go.rect[0], go.rect[1] + delta_y)
+                            go.vel[1] = 0
+                            go.vel[0] = go.vel[0] * 0.75
+                            if go.health < 100:
+                                go.health += 1
+                            else:
+                                go.health = 100
+                            return
+                super().update(delta, keys, game_data)
+
+
+        super().update(delta, keys, game_data)
+
+
+    def render(self, screen, game_data):
+        '''
+        '''
+        if not self.on_screen(game_data): return
+        draw_rect = self.rect.astype(int) + game_data.camera_pos.astype(int)
+        screen.blit(ga.helthpack, (draw_rect[0], draw_rect[1]-20))
+        
+class Button(GameObject):
+    """
+    """
+
+    def __init__(self, args):
+        '''
+        '''
+        super().__init__([args[0], args[1], 100, 30])
+        self.solid = False
+        self.script = args[2]
+        self.debug_color = (0, 0, 255)
+        self.pressed = False
+
+    def update(self, delta, keys, game_data):
+        '''
+        '''
+        # Game Logic
+        tolerance = 0.0
+        for go in game_data.collisions[self]:
+            if go.__class__.__name__ == 'Player':
+                if go.rect[0] >= self.rect[0]:
+                    delta_x = self.rect[0] + self.rect[2] + tolerance - go.rect[0]
+                elif go.rect[0] < self.rect[0]:
+                    delta_x = -(go.rect[0] + go.rect[2] + tolerance - self.rect[0])
+                if go.rect[1] >= self.rect[1]:
+                    delta_y = self.rect[1] + self.rect[3] + tolerance - go.rect[1]
+                elif go.rect[1] < self.rect[1]:
+                    delta_y = -(go.rect[1] + go.rect[3] + tolerance - self.rect[1])
+                if abs(delta_x) < abs(delta_y):
+                    go.set_pos(go.rect[0] + delta_x, go.rect[1])
+                    go.vel[0] = 0
+                else:
+                    go.set_pos(go.rect[0], go.rect[1] + delta_y)
+                    go.vel[1] = 0
+                    go.vel[0] = go.vel[0] * 0.75
+        super().update(delta, keys, game_data)
+
+    def render(self, screen, game_data):
+        '''
+        '''
+        if not self.on_screen(game_data): return
+        draw_rect = self.rect.astype(int) + game_data.camera_pos.astype(int)
+        if not self.pressed: screen.blit(ga.button, (draw_rect[0], draw_rect[1]-30))
+        else: screen.blit(ga.button_pressed, (draw_rect[0], draw_rect[1]-20))
         super().render(screen, game_data)

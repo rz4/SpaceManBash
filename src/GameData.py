@@ -59,6 +59,7 @@ class GameData():
         self.camera_limits = [0.0, 0.0, 0.0, 0.0]
         self.game_objects = []
         self.collisions = {}
+        self.level_scripts = []
 
         # Player Data
         self.player_pos = np.array([0.0, 0.0])
@@ -186,6 +187,7 @@ class GameData():
             pg.mixer.music.play()
             self.level_background = getattr(ga, data['background'])
             self.level_midground = getattr(ga, data['midground'])
+            for script in data['scripts']: self.add_level_script(script)
         except Exception as e:
             print("Couldn't Load Level:", self.level_index)
             print(e)
@@ -234,6 +236,16 @@ class GameData():
 
         '''
         self.game_objects.remove(game_object)
+
+    def add_level_script(self, script):
+        '''
+        '''
+        self.level_scripts.append(script)
+
+    def remove_level_script(self, script):
+        '''
+        '''
+        self.level_scripts.remove(script)
 
     def update_collisions(self):
         '''

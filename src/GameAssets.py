@@ -29,13 +29,62 @@ class GameAssets:
         GameAssets.crate = pg.image.load('../data/sprites/c_0.png').convert()
         GameAssets.teleporter = pg.image.load('../data/sprites/tp_1.png').convert()
         GameAssets.teleporter.set_colorkey((0, 0, 0))
+        GameAssets.helthpack = pg.image.load('../data/sprites/tp_0.png').convert()
+        GameAssets.helthpack.set_colorkey((0, 0, 0))
+        GameAssets.button = pg.image.load('../data/sprites/b_0.png').convert()
+        GameAssets.button.set_colorkey((0, 0, 0))
+        GameAssets.button_pressed = pg.image.load('../data/sprites/b_2.png').convert()
+        GameAssets.button_pressed.set_colorkey((0, 0, 0))
 
-        GameAssets.background_0 = pg.image.load("../data/sprites/space2.png").convert()
+        GameAssets.background_0 = pg.image.load("../data/sprites/background_images/space2.png").convert()
         GameAssets.background_0 = pg.transform.scale(GameAssets.background_0, (dim[0]+900,  dim[1]+100))
 
-        GameAssets.midground_0 = pg.image.load("../data/sprites/stationbckground.png").convert()
+        GameAssets.background_1 = pg.image.load("../data/sprites/background_images/space.png").convert()
+        GameAssets.background_1 = pg.transform.scale(GameAssets.background_1, (dim[0]+1000,  dim[1]+180))
+
+        GameAssets.midground_0 = pg.image.load("../data/sprites/background_images/station.png").convert()
         GameAssets.midground_0 = pg.transform.scale(GameAssets.midground_0, (dim[0]+2000,  dim[1]+500))
         GameAssets.midground_0.set_colorkey((0, 0, 0))
+
+        GameAssets.midground_1 = pg.image.load("../data/sprites/background_images/earth.png").convert()
+        GameAssets.midground_1 = pg.transform.scale(GameAssets.midground_1, (dim[0]+2000,  dim[1]+500))
+        GameAssets.midground_1.set_colorkey((0, 0, 0))
+
+        GameAssets.midground_2 = pg.image.load("../data/sprites/background_images/on_moon.png").convert()
+        GameAssets.midground_2 = pg.transform.scale(GameAssets.midground_2, (dim[0]+2000,  dim[1]+800))
+        GameAssets.midground_2.set_colorkey((0, 0, 0))
+
+        GameAssets.midground_3 = pg.image.load("../data/sprites/background_images/see_inside_ship.png").convert()
+        GameAssets.midground_3 = pg.transform.scale(GameAssets.midground_3, (dim[0]+2000,  dim[1]+400))
+        GameAssets.midground_3.set_colorkey((0, 0, 0))
+
+        GameAssets.midground_4 = pg.image.load("../data/sprites/background_images/outside_ship.jpg").convert()
+        GameAssets.midground_4 = pg.transform.scale(GameAssets.midground_4, (dim[0]+3000,  dim[1]+500))
+        GameAssets.midground_4.set_colorkey((0, 0, 0))
+
+        GameAssets.midground_5 = pg.image.load("../data/sprites/background_images/pipes.png").convert()
+        GameAssets.midground_5 = pg.transform.scale(GameAssets.midground_5, (dim[0]+2000,  dim[1]+500))
+        GameAssets.midground_5.set_colorkey((0, 0, 0))
+
+        GameAssets.midground_6 = pg.image.load("../data/sprites/background_images/mario_world_1.png").convert()
+        GameAssets.midground_6 = pg.transform.scale(GameAssets.midground_6, (dim[0]+2000,  dim[1]+300))
+        GameAssets.midground_6.set_colorkey((0, 0, 0))
+
+        GameAssets.midground_7 = pg.image.load("../data/sprites/background_images/tunnel_1.png").convert()
+        GameAssets.midground_7 = pg.transform.scale(GameAssets.midground_7, (dim[0]+2000,  dim[1]+350))
+        GameAssets.midground_7.set_colorkey((0, 0, 0))
+
+        GameAssets.midground_8 = pg.image.load("../data/sprites/background_images/tunnel_2.jpg").convert()
+        GameAssets.midground_8 = pg.transform.scale(GameAssets.midground_8, (dim[0]+1800,  dim[1]+350))
+        GameAssets.midground_8.set_colorkey((0, 0, 0))
+
+        GameAssets.midground_9 = pg.image.load("../data/sprites/background_images/junky.png").convert()
+        GameAssets.midground_9 = pg.transform.scale(GameAssets.midground_9, (dim[0]+4000,  dim[1]+450))
+        GameAssets.midground_9.set_colorkey((0, 0, 0))
+
+        GameAssets.midground_10 = pg.image.load("../data/sprites/background_images/water.jpg").convert()
+        GameAssets.midground_10 = pg.transform.scale(GameAssets.midground_10, (dim[0]+1500,  dim[1]+300))
+        GameAssets.midground_10.set_colorkey((0, 0, 0))
 
         # Load Animations
 
@@ -50,7 +99,7 @@ class GameAssets:
         GameAssets.dragon_die_left = SpriteSheet("../data/sprites/dragon.png").get_animation(167, 87, 80, 70, 2, 120, 120, flip=True)
         GameAssets.dragon_die_right = SpriteSheet("../data/sprites/dragon.png").get_animation(167, 87, 80, 70, 2, 120, 120)
 
-        frames = pyganim.getImagesFromSpriteSheet("../data/sprites/Lava_floor.png", rows=1, cols=11, rects=[])
+        frames = pyganim.getImagesFromSpriteSheet("../data/sprites/Lava_floor.jpg", rows=1, cols=11, rects=[])
         GameAssets.lava = pyganim.PygAnimation(list(zip(frames, [200 for i in range(11)])))
         GameAssets.lava.set_colorkey((0,0,0))
         GameAssets.lava.play()
