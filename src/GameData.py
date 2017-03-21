@@ -20,7 +20,7 @@ class GameData():
         Method initiates game state variables.
 
         '''
-        self.debug = True
+        self.debug = False
         self.game_name = "SpaceManBash"
         self.delta_sum = 0
         self.running = True
@@ -60,6 +60,7 @@ class GameData():
         self.game_objects = []
         self.collisions = {}
         self.level_scripts = []
+        self.script_vars = {}
 
         # Player Data
         self.player_pos = np.array([0.0, 0.0])
