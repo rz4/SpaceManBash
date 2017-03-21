@@ -202,7 +202,6 @@ class Background_Dragon(GameObject):
             ]
         self.anim_index = 0
         self.anim_speed = 1
-        Player.position = [0,0]
         self.vel_scalar = np.random.randint(1500)/1500+.5
 
     def update(self, delta, keys, game_data):
@@ -591,6 +590,7 @@ class Player(GameObject):
         game_data.player_health = self.health
         if self.alive and self.health <= 0:
             self.alive = False
+            ga.die.play()
             ga.smb_left_death.stop()
             ga.smb_right_death.stop()
             ga.smb_left_death.play()
