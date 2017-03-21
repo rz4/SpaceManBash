@@ -88,16 +88,13 @@ class GameAssets:
 
         # Load Animations
 
-        GameAssets.dragon_still_left = SpriteSheet("../data/sprites/dragon.png").get_animation(7, 18, 60, 51, 6, 120, 120, flip=True)
-        GameAssets.dragon_still_right = SpriteSheet("../data/sprites/dragon.png").get_animation(7, 18, 60, 51, 6, 120, 120)
-        GameAssets.dragon_fly_left = SpriteSheet("../data/sprites/dragon.png").get_animation(7, 87, 80, 70, 2, 120, 120, flip=True)
-        GameAssets.dragon_fly_right = SpriteSheet("../data/sprites/dragon.png").get_animation(7, 87, 80, 70, 2, 120, 120)
-        GameAssets.dragon_fire_left = SpriteSheet("../data/sprites/dragon.png").get_animation(2, 157, 71, 60, 7, 120, 120, flip=True)
-        GameAssets.dragon_fire_right = SpriteSheet("../data/sprites/dragon.png").get_animation(2, 157, 71, 60, 7, 120, 120)
-        GameAssets.dragon_flame_left = SpriteSheet("../data/sprites/dragon.png").get_animation(323, 222, 68, 42, 4, 120, 120, flip=True)
-        GameAssets.dragon_flame_right = SpriteSheet("../data/sprites/dragon.png").get_animation(323, 222, 68, 42, 4, 120, 120)
-        GameAssets.dragon_die_left = SpriteSheet("../data/sprites/dragon.png").get_animation(167, 87, 80, 70, 2, 120, 120, flip=True)
-        GameAssets.dragon_die_right = SpriteSheet("../data/sprites/dragon.png").get_animation(167, 87, 80, 70, 2, 120, 120)
+        frames = pyganim.getImagesFromSpriteSheet("../data/sprites/dragon_fly.png", rows=1, cols=2, rects=[])
+        GameAssets.dragon_fly_right = pyganim.PygAnimation(list(zip(frames, [200 for i in range(2)])))
+        GameAssets.dragon_fly_left = GameAssets.dragon_fly_right.getCopy()
+        GameAssets.dragon_fly_left.flip(True, False)
+        GameAssets.dragon_fly_left.makeTransformsPermanent()
+        GameAssets.dragon_fly_right.play()
+        GameAssets.dragon_fly_left.play()
 
         frames = pyganim.getImagesFromSpriteSheet("../data/sprites/Lava_floor.jpg", rows=1, cols=11, rects=[])
         GameAssets.lava = pyganim.PygAnimation(list(zip(frames, [200 for i in range(11)])))
