@@ -1,6 +1,6 @@
 '''
 GameAssets.py
-Last Updated: 12/17/17
+Last Updated: 3/17/17
 
 '''
 
@@ -22,6 +22,8 @@ class GameAssets:
         GameAssets.font_4 = pg.font.Font("../data/sprites/Gasalt-Black.ttf", 100)
 
         # Load Static Images
+        GameAssets.logo = pg.image.load("../data/sprites/logo.png").convert()
+        GameAssets.logo.set_colorkey((0, 0, 0))
         GameAssets.title = pg.image.load("../data/sprites/title.png").convert()
         GameAssets.title.set_colorkey((0, 0, 0))
 

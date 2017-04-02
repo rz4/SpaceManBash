@@ -49,10 +49,8 @@ class GameEngine():
 
         # Intro Animation
         if self.game_data.debug == False:
-            logo = pg.image.load("../doc/logo.png").convert()
-            logo.set_colorkey((0, 0, 0))
             self.screen.fill((252,240,228))
-            self.screen.blit(logo, (250, 150))
+            self.screen.blit(ga.logo, (250, 150))
 
             Transitions.run("fadeIn", 1.5)
             while(True):
