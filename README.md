@@ -1,4 +1,4 @@
-# SpaceManBash: Do Androids Dream About Bashing Electric Sheep?
+# SpaceManBash: Do Androids Dream of Bashing Electric Sheep?
 
 ![Current Version](https://img.shields.io/badge/build-alpha-green.svg)
 ![Current Version](https://img.shields.io/badge/version-1.0-green.svg)
